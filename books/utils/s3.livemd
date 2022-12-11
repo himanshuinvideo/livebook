@@ -1,0 +1,55 @@
+<!-- livebook:{"autosave_interval_s":60} -->
+
+# AWS S3
+
+```elixir
+Mix.install([
+  {:ex_aws, "~> 2.0"},
+  {:ex_aws_s3, "~> 2.0"},
+  {:poison, "~> 5.0"},
+  {:hackney, "~> 1.18"},
+  {:sweet_xml, "~> 0.7"},
+  {:explorer, "~> 0.3"},
+  {:evision, "~> 0.1"},
+  {:download, "~> 0.0.4"},
+  {:kino, "~> 0.7"}
+])
+```
+
+## Preparation
+
+```elixir
+alias ExAws.S3
+alias Explorer.DataFrame
+alias Explorer.Series
+require Explorer.DataFrame
+```
+
+```elixir
+auth_config = [
+  access_key_id: System.fetch_env!("LB_AWS_ACCESS_KEY_ID"),
+  secret_access_key: System.fetch_env!("LB_AWS_SECRET_ACCESS_KEY"),
+  region: System.fetch_env!("LB_AWS_REGION"),
+  schema: "https",
+  host: "ex-s3.fly.dev",
+  port: "443"
+]
+
+"ok"
+```
+
+## Get bucket list
+
+```elixir
+S3.list_buckets()
+|> ExAws.request(auth_config)
+```
+
+```elixir
+S3.list_buckets()
+|> ExAws.request!(auth_config)
+|> then(& &1.body.buckets)
+|> DataFrame.new()
+|> DataFrame.select(["name", "creation_date"])
+|> Kino.DataTable.new()
+```
