@@ -1,5 +1,11 @@
 #!/bin/bash
+
 export LIVEBOOK_HOME=$(pwd)/books
 export LIVEBOOK_DATA_PATH=$(pwd)/.livebook
+
+if [[ $(uname) == "Darwin" ]] && [[ $(uname -m) == 'arm64' ]]
+then
+  export EXLA_FLAGS=--config=macos_arm64
+fi
 
 livebook server --no-token

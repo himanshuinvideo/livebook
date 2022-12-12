@@ -11,7 +11,7 @@ let
     pkgs.niv
   ];
 
-  inputs =  basePackages ++ lib.optionals stdenv.isLinux [ inotify-tools ]
+  inputs = basePackages ++ lib.optionals stdenv.isLinux [ inotify-tools ]
     ++ lib.optionals stdenv.isDarwin
     (with darwin.apple_sdk.frameworks; [ CoreFoundation CoreServices ]);
 
