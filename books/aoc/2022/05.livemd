@@ -1,0 +1,192 @@
+<!-- livebook:{"autosave_interval_s":30} -->
+
+# Day 05
+
+```elixir
+Mix.install([
+  {:kino, "~> 0.8.0"},
+  {:kino_aoc, git: "https://github.com/ljgago/kino_aoc"}
+])
+```
+
+## Input
+
+```elixir
+{:ok, result} = KinoAOC.download_puzzle("2022", "5", System.fetch_env!("LB_AOC_SESSION"))
+input = result
+```
+
+## Part 1
+
+<!-- livebook:{"reevaluate_automatically":true} -->
+
+```elixir
+defmodule Procedure do
+  defstruct [:from, :to, :count]
+
+  def parse(instruction) do
+    x =
+      instruction
+      |> String.split(" ")
+
+    from = x |> Enum.at(1) |> String.to_integer()
+    to = x |> Enum.at(3) |> String.to_integer()
+    count = x |> Enum.at(5) |> String.to_integer()
+
+    %__MODULE__{
+      from: from,
+      to: to,
+      count: count
+    }
+  end
+end
+
+defmodule Crate do
+  def parse_stack(stack) do
+    stack
+    |> String.split("\n")
+    |> Enum.map(fn x ->
+      String.split(x, "[")
+      # |> Enum.map(fn x -> 
+      #   case x do
+      #     <<"[", l, "]">> -> l
+      #       _ -> ""
+      #   end
+      # end)
+    end)
+    # |> Enum.zip_with(& &1)
+    # |> Enum.map(fn x -> Enum.reverse(x)  end)
+    |> IO.inspect()
+  end
+
+  def parse_rearrangements(rearrangements) do
+    rearrangements
+    |> String.split("\n")
+    |> Enum.map(&Procedure.parse/1)
+  end
+end
+
+defmodule PartOne do
+  def resolve(input) do
+    IO.puts("--- Part One ---")
+    IO.puts("Result: #{run(input)}")
+  end
+
+  def run(input) do
+    input
+    |> String.split("\n\n", trim: true)
+    |> then(fn x ->
+      stack = x |> Enum.at(0) |> Crate.parse_stack()
+      procedures = x |> Enum.at(1) |> Crate.parse_rearrangements()
+      {stack, procedures}
+    end)
+  end
+end
+```
+
+<!-- livebook:{"reevaluate_automatically":true} -->
+
+```elixir
+input
+|> PartOne.resolve()
+```
+
+<!-- livebook:{"reevaluate_automatically":true} -->
+
+```elixir
+ExUnit.start(autorun: false)
+
+defmodule PartOneTest do
+  use ExUnit.Case, async: true
+  import PartOne
+
+  test "part one" do
+    input = "    [D]    
+[N] [C]    
+[Z] [M] [P]
+ 1   2   3 
+
+move 1 from 2 to 1
+move 3 from 1 to 3
+move 2 from 2 to 1
+move 1 from 1 to 2"
+    result = run(input)
+    assert result == "CMZ"
+  end
+end
+
+ExUnit.run()
+```
+
+## Part 2
+
+```elixir
+defmodule Assignment do
+  defp in_range(first, number) do
+    Enum.at(first, 0) <= number and Enum.at(first, 1) >= number
+  end
+
+  def intersect?(first, second) do
+    cond do
+      in_range(first, Enum.at(second, 0)) or in_range(first, Enum.at(second, 1)) -> true
+      in_range(second, Enum.at(first, 0)) or in_range(second, Enum.at(first, 1)) -> true
+      true -> false
+    end
+  end
+end
+
+defmodule PartTwo do
+  def resolve(input) do
+    IO.puts("--- Part One ---")
+    IO.puts("Result: #{run(input)}")
+  end
+
+  def run(input) do
+    input
+    |> String.split("\n", trim: true)
+    |> Enum.map(fn x ->
+      String.split(x, ",", trim: true)
+      |> Enum.map(fn x -> String.split(x, "-", trim: true) end)
+      |> Enum.map(fn x ->
+        Enum.map(x, fn x ->
+          String.to_integer(x)
+        end)
+      end)
+    end)
+    |> Enum.count(fn x ->
+      Assignment.intersect?(Enum.at(x, 0), Enum.at(x, 1))
+    end)
+  end
+end
+```
+
+<!-- livebook:{"reevaluate_automatically":true} -->
+
+```elixir
+input
+|> PartTwo.resolve()
+```
+
+<!-- livebook:{"reevaluate_automatically":true} -->
+
+```elixir
+ExUnit.start(autorun: false)
+
+defmodule PartTwoTest do
+  use ExUnit.Case, async: true
+  import PartTwo
+
+  test "part two" do
+    input = "2-4,6-8
+2-3,4-5
+5-7,7-9
+2-8,3-7
+6-6,4-6
+2-6,4-8"
+    result = run(input)
+    assert result == 4
+  end
+end
+
+ExUnit.run()
+```

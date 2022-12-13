@@ -1,0 +1,246 @@
+<!-- livebook:{"autosave_interval_s":null,"persist_outputs":true} -->
+
+# Day 03
+
+```elixir
+Mix.install([
+  {:kino, "~> 0.6.2"},
+  {:kino_aoc, git: "https://github.com/ljgago/kino_aoc"}
+])
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+:ok
+```
+
+## Input
+
+```elixir
+{:ok, result} = KinoAOC.download_puzzle("2022", "3", System.fetch_env!("LB_AOC_SESSION"))
+input = result
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+"gfWpjRRQffQGCHHJsGqjsj\nSclzJZZvmmnPbJtVSqqNBqVCBdSCsd\ntlbvZJDZtmtPcJmlPnhMFQWWpMRFTfLDRRTWRp\nHjMPgSWjVrjgbHRRSSMRgjRdpdbGdlcdCvQfcCdlwQJfdf\nLNDnhtNtLNFFZDtFnhzvdldDflvvDCdlJfldpJ\nZFLFZZmFtFtTNTSPRrVPWWMpRP\nqLBSBLRwmgzqCbzCffDlrfCV\nTFFFHNWFMFFMpHpGHMTHGNhrldWZCsdZsslZlZfrflDVss\nPTMcPGntTThHhTGctnMvSwjjvmmqLBmnjqqgCR\nnClJtMwwntqVVPJcgZqq\nmjpsDcrcSSFFPZqFBWWgVP\nvQcjsvhrvvrmhbmNHMNnlHbNMtCtNM\nbgvvhnTQtjrrrhsDDf\npLSMltLzLLSjFrSSjrSJHD\nzNWRLBdZPllPQtCvttgCqb\nDRlDrrFTNDNlgzsGTBfcnqhhcnJfcrCSqc\nMMmmdWtdLmvtldHjMmQfPBqSJWnfCCCqcWSSPJ\nvjHMjLmjpLtHptQLmHvwTRgNVVpTzZFZgZRlsVTN\nrzpMpDCGFCFFjRFsRPFRNFPv\nfWclbHCHtSmfvjnmfsvZ\nwTcTlSwwtQtWclBQBLGMLMCLVzVLwJGqLd\nMQSjLNjPPLLSBPjfQhSPHjDVCjDtVVpDHwbwVpbD\nRcmWzsRrzZrmTszWRqWlmRJscbtHwCbndCtcDVddDpdnVnbt\nJTsrGGTqmwTlWmTzJzWmhhPLLGgPFgBffSSPhFFM\nqMMRNZMDDNWLPqfzCgDcGncVDCgG\nwwBFhwhhBgmcVzhghG\ntbJbjjtJvwtdtwjpFtlbvtdTLNSMqNqMMgqNHPlZRTNggL\nqmjMHsZmZSbjbZMjSLFFFFwgsgvFswpwww\nhRJBhmnhhvFFwhcv\nllfWDWzrzBNTRfNBrWzzTmZbGTMjPqMmZPjVbSZGSP\nCRRPLwwcclcGVppQ\nSHFjDjjHDTfSDNTTHfSHjQVGrpmllQQWltVVVZGp\nHFlqzDTfqlzwbgPJLwCP\nWRCNLphpLppSCWVHNfLRzVnQMnBnMddPMQDFQgrhPQFM\njTjJqvqjvPVJFJFBJF\nqTsZbvGqqZlstsmZVljtwqwSHHNWczHSSRcWNSRHzzNfbW\nglgzDzHjSrVHcVgbrjmNsscNGmNWssGNNtst\nhHPQLHJpwdLpdHfQQtnZmNMwnZGZWwsFZM\nQpdhPJRTJfPphJfhCBlVqVvgvVDBbvVqDbHD\nVtHzjZpjVtHrprgGmjHsGHNdSJFQRcLJqCdQcSqJNpcq\nbBWfTPwhbfDlMnhffRwQJQNdqJcLFQLSdR\nbhBhvfMWTnlDnTBfPSmvmjsjmmGtzHtsHm\npcRPRPWrSDcJGZSStmwZZS\nVnLfCfTlfVzfnMMBCqVNZJdtjNtJjhJdGNNbwT\nBLvqCCMVsnRQsPQgDcZH\ncQbqqQhDGhlQfQlhQrqGsTNgLgCpRgLTPPPLNbpg\nwtHVddVFwSHznZwwznCpRBdjppNBNTTdCjRR\nZtWFwWtSmvVnwZDrCMGfQlDDJQmD\nPzPZGCZzrZrlhdjdCqfCsqQdRD\ncbvZLVVFvbbNSNFHSDnsDQdnfqNQDRngsR\nFJHSLSFSScJJbWHFmFVFSZmrrzBmhtBwmzBMPMPzPh\nnlpFcLBgcVcLbssGVBGGrlpGPhJJJJJqPBZPDNMQMJJhJQZZ\nSSTjHzfHwtZSPVQVQMRQ\nTzVHwWfTtzwdVzsbFnGgsbdcGrLc\nFppVBRVZDdLmrDGmmfrQ\nNtNMPNshJCzznLGJSrqRrRrr\ntRssthhPlCWhPzsWtzhzCbVVjwTpVwdZZTpwjbdBbwBc\nTTWblHWScvPCCHTWFzSrqqsNNSmdmqrrpz\nRLRwjjnjZNprzmmZcq\nQQgtQnccQDGjgLDRRcLthQhFBvCbMtMHTWlBFllBbFCMTW\nWnBVNvDnVsNvZWdrWDLVDMbsHpTjpHCSSClsbSCCMH\nGPFtmztzgPhRFtJTdbTwjppSCjpgSl\nhJcfPtQhdtWNVZqNnqNQ\nGLcqZPPsnqQcFsmBBrqRvrddNqrC\nMtHthJwLllwvjRvvtrvBRS\nVHMfDLbpfznszZQG\nWBSdPlQPRfBtGQPfBGPBJgzgjwsJzsszJwCrdwCT\nZpppVpMVpnVHMVVbZRJrCgwRzTJrwNJw\nMvhmnpLqLmhVmBlftRQBFSlR\nhhQlSJqhtCSnqZJnqShSlNDwRzpvdwRlMBMMdcjRjMpMRc\nfrrGmLmWbfFrsmFHmBzBvBcwdJbvpjzbMM\nmmgFrVGLWJLFGsgfhSVtVPqntqnnSStN\nSFJTJTSqswwFQbwf\ncDtcWPclrtPwVsfssQmN\nHDtwWCgWdggdzSGJMSzGMq\nJpqJtWRJMhCMJpMQCWtFrjgHdgdlgllwNjlQjldH\nfBzPZcZvnBmDnZvZBZDmPvglVVVdgHHSwrNRgVgwNPRH\nGbZnZccfvcsZmccsmnnZTRbCCMWFTWJqFCCMJFRT\nvrrFqrFTBTmLmNrLMqMTHddJbHpWnhdWdWbHhJGM\nwBzfwzcQSzWSSshpdWGp\ngwjPPPDQtzQlzQDPqTgLBRmRqZBvqFNR\nbWVptFFsbPcZsGLhsZGmLB\nqnWrnrHdMCDCNqfWmvRRZSSRLdRGZGRG\nnNqqNDfMrMWHDQNHzWfHNDnwzblpzFlbwtFbVVlwVcPJpP\nBHJhlHdJQggvddglJBBhglhQzZHPZpFFPDMzFDDRDFZZDFZD\nrSTfqnCffMfCVfCLNqbzbjWNDbbWDPFpPFbP\nnfnnrSfCTVSwrqSLCGfTGlgQhlvsGMJQJBhhssJhGc\ntBjjDjjqfDjLfJlrLgglvmrlmrcc\nTwNNTVhwwpgvGSNNSssS\nTbwhnvvChhbVRTPPRJBJQQfJttMQQJCQfW\nmWSvSQVgmWQsQvspQJlrlLnJLLpCClhhlp\nbFHRjZdNjjBZzFzhtnCllCcJLrCBll\nHFFNHbdZZLZjfPFjHVQmWDDVsvsmTqVqDf\nJJPllQQClqgBCgdHwHbpjVTwHd\ntmGZtjGjHZpVbfMT\nShGjNGWmDSNcNRtGmshDRzzCvzQJJRBLrvlrBPJv\ncTpqsTWqVVpsNLfvCDFlMFDVFL\nJnndJPddQgzHlvMJFDhLCG\nBjtntgdRnQgzjdBRQBlpNWrTTlNTSwNpWS\nqHmqLVLjmVqsDBLtmjmbtPwCTwwPzGWRgGwGwMwW\nZhcCNCSprRTWTwSnWW\nhflhZvvQhppZfcNpvrhpQHjVjLmbVmmVHVCFDvqVFb\nnnNrwDnZrspwDNnZsNSDsNbCmpjvMTPQjLMmPmmQPGBTQP\nFdVtRdRfctBQPmTtTLQB\nqhzWVWJqVHwbhlLSsS\nhtWmhDhFztnztDhtBmBtghPRSrpfjVwPdfPwpwnRSVrr\ncbCHvgJGcTqbqcbqqqcqsMsRVrSCwffdRPPpVpwCRSwfjj\nGlgGQqTqbgQzttmBNNFz\nNWQNQgdTgjQNddTZfrCQWRDnnnbqnLqnRcjJlqqvDj\nFtSSmSmJhpllcclDvpln\nJBVVSsSFBVBttShFGSPQfCGNdrMfZZTQTZNNdC\nHgHthMhphcbfbMMfHhsGGDCRRVlcVSScsCRz\nnWvPFqLqPNdjnNLnjdJnPdWjGlssDPSsllVCRzlTCTGlSDzS\nRvddJRJQHwQwpZZb\ngdZwgpjZZQtHTdrWrwdpWRnlhNBRlLbFthNhflhBnL\nCVzDCPGMVqVmGsGGbJCmCDvMcRcqnBFFFnRBBNRBBNqhnFfF\nDsmSGsGPzvMGJvdbgTSTbjbSSdgH\njBGmbNBQGdBNNDJNQRLLVDsHtDRzHHZZcH\nwCWPFWPCrPhPrplvprhwpCHHtszttqZslRVHLtzVlJZL\nvprMMvMnJCwnnPShNGSTfGSfNmmgdNff\nbPtLbvVWWztbLSVVnbszpzQsrcDDBdpRcDrs\nllZmgCZqgCFgmdRdJcscBdJsmQ\nFZlgfqCFfgZHlqCMCglwCFGWntLLSMRSPGPVttWRtVGL\nvtnDsDtrnrSvrMVmbrrJg" <> ...
+```
+
+## Part 1
+
+<!-- livebook:{"reevaluate_automatically":true} -->
+
+```elixir
+defmodule RuckSack do
+  def find_common(first, second) do
+    MapSet.intersection(MapSet.new(first), MapSet.new(second))
+    |> MapSet.to_list()
+  end
+
+  def to_priority(char) do
+    val = :binary.first(char)
+
+    cond do
+      val >= 97 and val <= 122 -> val - 96
+      val >= 65 and val <= 90 -> val - 38
+      true -> val
+    end
+  end
+end
+
+defmodule PartOne do
+  def resolve(input) do
+    IO.puts("--- Part One ---")
+    IO.puts("Result: #{run(input)}")
+  end
+
+  def run(input) do
+    input
+    |> String.split("\n", trim: true)
+    |> Enum.map(fn x ->
+      x = String.split(x, "", trim: true)
+      half = (length(x) / 2) |> round()
+      Enum.chunk_every(x, half)
+    end)
+    |> Enum.map(fn x -> RuckSack.find_common(Enum.at(x, 0), Enum.at(x, 1)) end)
+    |> List.flatten()
+    |> Enum.map(&RuckSack.to_priority/1)
+    |> Enum.sum()
+  end
+end
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+{:module, PartOne, <<70, 79, 82, 49, 0, 0, 12, ...>>, {:run, 1}}
+```
+
+<!-- livebook:{"reevaluate_automatically":true} -->
+
+```elixir
+input
+|> PartOne.resolve()
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+--- Part One ---
+Result: 7845
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+:ok
+```
+
+<!-- livebook:{"reevaluate_automatically":true} -->
+
+```elixir
+ExUnit.start(autorun: false)
+
+defmodule PartOneTest do
+  use ExUnit.Case, async: true
+  import PartOne
+
+  test "part one" do
+    input = "vJrwpWtwJgWrhcsFMMfFFhFp
+jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL
+PmmdzqPrVvPwwTWBwg
+wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn
+ttgJtRGJQctTZtZT
+CrZsJsPPZsGzwwsLwLmpwMDw"
+    result = run(input)
+    assert result == 157
+  end
+end
+
+ExUnit.run()
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+.
+Finished in 0.00 seconds (0.00s async, 0.00s sync)
+1 test, 0 failures
+
+Randomized with seed 67809
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+%{excluded: 0, failures: 0, skipped: 0, total: 1}
+```
+
+## Part 2
+
+```elixir
+defmodule RuckSack do
+  def find_common(first, second, third) do
+    MapSet.intersection(MapSet.new(first), MapSet.new(second))
+    |> MapSet.intersection(MapSet.new(third))
+    |> MapSet.to_list()
+  end
+
+  def to_priority(char) do
+    val = :binary.first(char)
+
+    cond do
+      val >= 97 and val <= 122 -> val - 96
+      val >= 65 and val <= 90 -> val - 38
+    end
+  end
+end
+
+defmodule PartTwo do
+  def resolve(input) do
+    IO.puts("--- Part One ---")
+    IO.puts("Result: #{run(input)}")
+  end
+
+  def run(input) do
+    input
+    |> String.split("\n", trim: true)
+    |> Enum.chunk_every(3)
+    |> Enum.map(fn x ->
+      Enum.map(x, fn x -> String.split(x, "", trim: true) end)
+    end)
+    |> Enum.map(fn x -> RuckSack.find_common(Enum.at(x, 0), Enum.at(x, 1), Enum.at(x, 2)) end)
+    |> List.flatten()
+    |> Enum.map(&RuckSack.to_priority/1)
+    |> Enum.sum()
+  end
+end
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+{:module, PartTwo, <<70, 79, 82, 49, 0, 0, 11, ...>>, {:run, 1}}
+```
+
+<!-- livebook:{"reevaluate_automatically":true} -->
+
+```elixir
+input
+|> PartTwo.resolve()
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+--- Part One ---
+Result: 2790
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+:ok
+```
+
+<!-- livebook:{"reevaluate_automatically":true} -->
+
+```elixir
+ExUnit.start(autorun: false)
+
+defmodule PartTwoTest do
+  use ExUnit.Case, async: true
+  import PartTwo
+
+  test "part one" do
+    input = "vJrwpWtwJgWrhcsFMMfFFhFp
+jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL
+PmmdzqPrVvPwwTWBwg
+wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn
+ttgJtRGJQctTZtZT
+CrZsJsPPZsGzwwsLwLmpwMDw"
+    result = run(input)
+    assert result == 70
+  end
+end
+
+ExUnit.run()
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+.
+Finished in 0.00 seconds (0.00s async, 0.00s sync)
+1 test, 0 failures
+
+Randomized with seed 135085
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+%{excluded: 0, failures: 0, skipped: 0, total: 1}
+```

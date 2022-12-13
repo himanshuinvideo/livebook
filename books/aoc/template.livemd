@@ -1,0 +1,29 @@
+<!-- livebook:{"autosave_interval_s":null} -->
+
+# Template
+
+```elixir
+Mix.install([{:kino, "~> 0.6.2"}])
+```
+
+## Input
+
+```elixir
+input = Kino.Input.textarea("Please paste your input")
+```
+
+## Part 1
+
+```elixir
+input
+|> Kino.Input.read()
+|> String.split("\n", trim: true)
+```
+
+## Part 2
+
+```elixir
+input
+|> Kino.Input.read()
+|> String.split("\n", trim: true)
+```

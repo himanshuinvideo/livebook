@@ -1,0 +1,47 @@
+<!-- livebook:{"autosave_interval_s":null} -->
+
+# Day 01
+
+```elixir
+Mix.install([{:kino, "~> 0.6.2"}])
+```
+
+## Input
+
+```elixir
+input = Kino.Input.textarea("Please paste your")
+```
+
+## Part 1
+
+```elixir
+input
+|> Kino.Input.read()
+|> String.split("\n", trim: true)
+|> Enum.map(&String.to_integer/1)
+|> Enum.chunk_every(2, 1, :discard)
+|> Enum.count(fn [left, right] -> right > left end)
+```
+
+Stream Based
+
+```elixir
+input
+|> Kino.Input.read()
+|> String.splitter("\n", trim: true)
+|> Stream.map(&String.to_integer/1)
+|> Stream.chunk_every(2, 1, :discard)
+|> Enum.count(fn [left, right] -> right > left end)
+```
+
+## Part 2
+
+```elixir
+input
+|> Kino.Input.read()
+|> String.split("\n", trim: true)
+|> Enum.map(&String.to_integer/1)
+|> Enum.chunk_every(3, 1, :discard)
+|> Enum.chunk_every(2, 1, :discard)
+|> Enum.count(fn [left, right] -> Enum.sum(right) > Enum.sum(left) end)
+```

@@ -1,0 +1,327 @@
+<!-- livebook:{"autosave_interval_s":null,"persist_outputs":true} -->
+
+# Day 02
+
+```elixir
+Mix.install([
+  {:kino, "~> 0.6.2"},
+  {:kino_aoc, git: "https://github.com/ljgago/kino_aoc"}
+])
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+* Getting kino_aoc (https://github.com/ljgago/kino_aoc)
+remote: Enumerating objects: 41, done.        
+remote: Counting objects: 100% (41/41), done.        
+remote: Compressing objects: 100% (30/30), done.        
+remote: Total 41 (delta 8), reused 37 (delta 5), pack-reused 0        
+origin/HEAD set to main
+Resolving Hex dependencies...
+Dependency resolution completed:
+New:
+  castore 0.1.19
+  finch 0.14.0
+  hpax 0.1.2
+  jason 1.4.0
+  kino 0.6.2
+  mime 2.0.3
+  mint 1.4.2
+  nimble_options 0.5.1
+  nimble_pool 0.2.6
+  req 0.3.2
+  table 0.1.2
+  telemetry 1.1.0
+* Getting kino (Hex package)
+* Getting req (Hex package)
+* Getting finch (Hex package)
+* Getting jason (Hex package)
+* Getting mime (Hex package)
+* Getting castore (Hex package)
+* Getting mint (Hex package)
+* Getting nimble_options (Hex package)
+* Getting nimble_pool (Hex package)
+* Getting telemetry (Hex package)
+* Getting hpax (Hex package)
+* Getting table (Hex package)
+==> table
+Compiling 5 files (.ex)
+Generated table app
+==> mime
+Compiling 1 file (.ex)
+Generated mime app
+==> nimble_options
+Compiling 3 files (.ex)
+Generated nimble_options app
+==> kino
+Compiling 28 files (.ex)
+Generated kino app
+===> Analyzing applications...
+===> Compiling telemetry
+==> jason
+Compiling 10 files (.ex)
+Generated jason app
+==> hpax
+Compiling 4 files (.ex)
+Generated hpax app
+==> nimble_pool
+Compiling 2 files (.ex)
+Generated nimble_pool app
+==> castore
+Compiling 1 file (.ex)
+Generated castore app
+==> mint
+Compiling 1 file (.erl)
+Compiling 19 files (.ex)
+Generated mint app
+==> finch
+Compiling 13 files (.ex)
+Generated finch app
+==> req
+Compiling 5 files (.ex)
+Generated req app
+==> kino_aoc
+Compiling 3 files (.ex)
+Generated kino_aoc app
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+:ok
+```
+
+## Input
+
+```elixir
+input1 = Kino.Input.textarea("Please paste your")
+```
+
+## Part 1
+
+<!-- livebook:{"reevaluate_automatically":true} -->
+
+```elixir
+defmodule RPS do
+  def parse_to_rps(input) do
+    case input do
+      "A" -> :rock
+      "X" -> :rock
+      "B" -> :paper
+      "Y" -> :paper
+      "C" -> :scissor
+      "Z" -> :scissor
+    end
+  end
+
+  def score_for_selection(selection) do
+    case selection do
+      :rock -> 1
+      :paper -> 2
+      :scissor -> 3
+    end
+  end
+
+  def play(other, me) do
+    cond do
+      me == other -> :draw
+      me == :rock and other == :paper -> :lose
+      me == :rock and other == :scissor -> :win
+      me == :paper and other == :rock -> :win
+      me == :paper and other == :scissor -> :lose
+      me == :scissor and other == :paper -> :win
+      me == :scissor and other == :rock -> :lose
+    end
+  end
+
+  def score_for_game(result) do
+    case result do
+      :lose -> 0
+      :draw -> 3
+      :win -> 6
+    end
+  end
+end
+
+defmodule PartOne do
+  def resolve(input) do
+    IO.puts("--- Part One ---")
+    IO.puts("Result: #{run(input)}")
+  end
+
+  def run(input) do
+    input
+    |> String.split("\n")
+    |> Enum.map(fn x -> String.split(x, " ") end)
+    |> Enum.map(fn x -> Enum.map(x, &RPS.parse_to_rps/1) end)
+    |> Enum.map(fn [other, me] ->
+      score_for_selection = RPS.score_for_selection(me)
+      score = RPS.play(other, me) |> RPS.score_for_game()
+      [score_for_selection, score] |> Enum.sum()
+    end)
+    |> Enum.sum()
+  end
+end
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+{:module, PartOne, <<70, 79, 82, 49, 0, 0, 11, ...>>, {:run, 1}}
+```
+
+<!-- livebook:{"reevaluate_automatically":true} -->
+
+```elixir
+input1
+|> Kino.Input.read()
+|> PartOne.resolve()
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+--- Part One ---
+Result: 8890
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+:ok
+```
+
+<!-- livebook:{"reevaluate_automatically":true} -->
+
+```elixir
+ExUnit.start(autorun: false)
+
+defmodule PartOneTest do
+  use ExUnit.Case, async: true
+  import PartOne
+
+  test "part one" do
+    input = "A Y\nB X\nC Z"
+    result = run(input)
+    assert result == 15
+  end
+end
+
+ExUnit.run()
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+.
+Finished in 0.00 seconds (0.00s async, 0.00s sync)
+1 test, 0 failures
+
+Randomized with seed 133621
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+%{excluded: 0, failures: 0, skipped: 0, total: 1}
+```
+
+## Part 2
+
+```elixir
+input2 = Kino.Input.textarea("Please paste your")
+```
+
+```elixir
+defmodule RPS do
+  def parse_to_rps(input) do
+    case input do
+      "A" -> :rock
+      "B" -> :paper
+      "C" -> :scissor
+      "X" -> :lose
+      "Y" -> :draw
+      "Z" -> :win
+    end
+  end
+
+  def score_for_selection(selection) do
+    case selection do
+      :rock -> 1
+      :paper -> 2
+      :scissor -> 3
+    end
+  end
+
+  def choose(other, result) do
+    cond do
+      other == :rock and result == :lose -> :scissor
+      other == :rock and result == :draw -> :rock
+      other == :rock and result == :win -> :paper
+      other == :paper and result == :lose -> :rock
+      other == :paper and result == :draw -> :paper
+      other == :paper and result == :win -> :scissor
+      other == :scissor and result == :lose -> :paper
+      other == :scissor and result == :draw -> :scissor
+      other == :scissor and result == :win -> :rock
+    end
+  end
+
+  def score_for_game(result) do
+    case result do
+      :lose -> 0
+      :draw -> 3
+      :win -> 6
+    end
+  end
+end
+
+defmodule PartTwo do
+  def resolve(input) do
+    IO.puts("--- Part Two ---")
+    IO.puts("Result: #{run(input)}")
+  end
+
+  def run(input) do
+    input
+    |> String.split("\n")
+    |> Enum.map(fn x -> String.split(x, " ") end)
+    |> Enum.map(fn x -> Enum.map(x, &RPS.parse_to_rps/1) end)
+    |> Enum.map(fn [other, result] ->
+      selection = RPS.choose(other, result)
+      score_for_selection = RPS.score_for_selection(selection)
+      score = result |> RPS.score_for_game()
+      [score_for_selection, score] |> Enum.sum()
+    end)
+    |> Enum.sum()
+  end
+end
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+{:module, PartTwo, <<70, 79, 82, 49, 0, 0, 11, ...>>, {:run, 1}}
+```
+
+<!-- livebook:{"reevaluate_automatically":true} -->
+
+```elixir
+input2
+|> Kino.Input.read()
+|> PartTwo.resolve()
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+--- Part Two ---
+Result: 10238
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+:ok
+```

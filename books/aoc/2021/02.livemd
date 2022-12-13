@@ -1,0 +1,47 @@
+<!-- livebook:{"autosave_interval_s":600} -->
+
+# Day 02
+
+```elixir
+Mix.install([{:kino, "~> 0.6.2"}])
+```
+
+## Input
+
+```elixir
+input = Kino.Input.textarea("Please paste your")
+```
+
+## Part 1
+
+```elixir
+input
+|> Kino.Input.read()
+|> String.split("\n", trim: true)
+|> Enum.reduce({_depth = 0, _position = 0}, fn
+  "forward " <> number, {depth, position} -> {depth, String.to_integer(number) + position}
+  "down " <> number, {depth, position} -> {depth + String.to_integer(number), position}
+  "up " <> number, {depth, position} -> {depth + -String.to_integer(number), position}
+end)
+|> then(fn {depth, position} -> depth * position end)
+```
+
+## Part 2
+
+```elixir
+input
+|> Kino.Input.read()
+|> String.split("\n", trim: true)
+|> Enum.reduce({_depth = 0, _position = 0, _aim = 0}, fn
+  "forward " <> number, {depth, position, aim} ->
+    number = String.to_integer(number)
+    {depth + aim * number, position + number, aim}
+
+  "down " <> number, {depth, position, aim} ->
+    {depth, position, aim + String.to_integer(number)}
+
+  "up " <> number, {depth, position, aim} ->
+    {depth, position, aim - String.to_integer(number)}
+end)
+|> then(fn {depth, position, _aim} -> depth * position end)
+```

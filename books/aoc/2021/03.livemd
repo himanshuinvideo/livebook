@@ -1,0 +1,69 @@
+<!-- livebook:{"autosave_interval_s":600} -->
+
+# Day 03
+
+```elixir
+Mix.install([{:kino, "~> 0.6.2"}])
+```
+
+## Input
+
+```elixir
+input = Kino.Input.textarea("Please paste your input")
+```
+
+## Part 1
+
+<!-- livebook:{"reevaluate_automatically":true} -->
+
+```elixir
+input
+|> Kino.Input.read()
+|> String.split("\n", trim: true)
+|> Enum.map(fn s ->
+  String.split(s, "", trim: true)
+  |> Enum.map(&String.to_integer/1)
+end)
+|> Enum.zip_with(fn elements -> elements end)
+|> Enum.map(fn list ->
+  half = div(length(list), 2)
+  zero = list |> Enum.count_until(fn n -> n == 0 end, half + 1)
+
+  gamma = if zero > half, do: 0, else: 1
+  epsilon = if zero < half, do: 0, else: 1
+
+  [gamma, epsilon]
+end)
+|> Enum.zip_with(fn e -> e end)
+|> Enum.map(fn el ->
+  el |> Enum.join() |> String.to_integer(2)
+end)
+|> then(fn [gamma, epsilon] -> gamma * epsilon end)
+```
+
+## Part 2
+
+```elixir
+input
+|> Kino.Input.read()
+|> String.split("\n", trim: true)
+|> Enum.map(fn s ->
+  String.split(s, "", trim: true)
+  |> Enum.map(&String.to_integer/1)
+end)
+|> Enum.zip_with(fn elements -> elements end)
+|> Enum.map(fn list ->
+  half = div(length(list), 2)
+  zero = list |> Enum.count_until(fn n -> n == 0 end, half + 1)
+
+  gamma = if zero > half, do: 0, else: 1
+  epsilon = if zero < half, do: 0, else: 1
+
+  [gamma, epsilon]
+end)
+|> Enum.zip_with(fn e -> e end)
+|> Enum.map(fn el ->
+  el |> Enum.join() |> String.to_integer(2)
+end)
+|> then(fn [gamma, epsilon] -> gamma * epsilon end)
+```
