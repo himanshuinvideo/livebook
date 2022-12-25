@@ -1,0 +1,58 @@
+# Kino
+
+```elixir
+Mix.install([
+  {:kino, "~> 0.8.0"}
+])
+```
+
+## Visualise Process
+
+```elixir
+self()
+```
+
+```elixir
+:kino
+```
+
+```elixir
+for _ <- 1..1_000_000 do
+  spawn(fn -> :ok end)
+end
+```
+
+```elixir
+Kino.Process.render_seq_trace(fn ->
+  1..4
+  |> Task.async_stream(
+    fn _ -> Process.sleep(Enum.random(100..300)) end,
+    max_concurrency: 4
+  )
+  |> Stream.run()
+end)
+```
+
+```elixir
+processes =
+  for pid <- Process.list() do
+    info = Process.info(pid, [:reductions, :memory, :status])
+
+    %{
+      pid: inspect(pid),
+      reductions: info[:reductions],
+      memory: info[:memory],
+      status: info[:status]
+    }
+  end
+```
+
+## Memory Usage
+
+```elixir
+frame = Kino.Frame.new() |> Kino.render()
+
+for _ <- Stream.interval(1000) do
+  Kino.Frame.render(frame, :erlang.memory())
+end
+```

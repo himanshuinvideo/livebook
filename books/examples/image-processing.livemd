@@ -1,0 +1,38 @@
+# Image Processing
+
+```elixir
+Mix.install(
+  [
+    {:kino, "~> 0.7.0"},
+    {:evision, "~> 0.1.21"},
+    {:req, "~> 0.3"},
+    {:kino_bumblebee, "~> 0.1.0"},
+    {:exla, "~> 0.4.1"}
+  ],
+  config: [nx: [default_backend: EXLA.Backend]]
+)
+```
+
+## Section
+
+```elixir
+%{body: image} =
+  Req.get!("https://raw.githubusercontent.com/pjreddie/darknet/master/data/dog.jpg")
+
+Kino.Image.new(image, :jpeg)
+```
+
+```elixir
+alias Evision, as: OpenCV
+rotation = OpenCV.getRotationMatrix2D({512 / 2, 512 / 2}, 90, 1)
+
+image
+|> OpenCV.imdecode(OpenCV.cv_IMREAD_ANYCOLOR())
+|> OpenCV.blur({9, 9})
+|> OpenCV.warpAffine(rotation, {512, 512})
+|> OpenCV.rectangle({50, 10}, {125, 60}, {255, 0, 0})
+|> OpenCV.ellipse({300, 300}, {100, 200}, 30, 0, 360, {255, 255, 0}, thickness: 3)
+|> dbg()
+
+:ok
+```

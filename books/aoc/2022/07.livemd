@@ -1,0 +1,479 @@
+<!-- livebook:{"autosave_interval_s":30,"persist_outputs":true} -->
+
+# Day 07
+
+```elixir
+Mix.install([
+  {:kino, "~> 0.8.0"},
+  {:kino_aoc, git: "https://github.com/ljgago/kino_aoc"}
+])
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+:ok
+```
+
+## Input
+
+```elixir
+{:ok, result} = KinoAOC.download_puzzle("2022", "7", System.fetch_env!("LB_AOC_SESSION"))
+input = result
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+"$ cd /\n$ ls\ndir bqc\ndir mwmlf\ndir ngn\n143562 nrwjb\n78449 qqvdcclf\ndir qrnm\ndir smfzmmhc\n116085 tvrms\ndir vrdrsj\n$ cd bqc\n$ ls\n5693 qqvdcclf\n$ cd ..\n$ cd mwmlf\n$ ls\ndir cmfphpc\ndir lqqshq\ndir mwmlf\ndir rlf\ndir smfzmmhc\n$ cd cmfphpc\n$ ls\n235620 tprth.gjn\n82743 vrdrsj.fbl\n$ cd ..\n$ cd lqqshq\n$ ls\n94188 crswqlvd.nsj\ndir dttthls\n60078 lbsfsspm\ndir lqp\n74624 nrwjb\n247709 tjhcqw.wrq\n267693 tvrms\ndir zshrcgfn\n$ cd dttthls\n$ ls\n109072 nrwjb\n31512 qqvdcclf\n$ cd ..\n$ cd lqp\n$ ls\n237917 nrwjb\n45489 vrdrsj.ntw\n$ cd ..\n$ cd zshrcgfn\n$ ls\n185533 smfzmmhc.zzd\n$ cd ..\n$ cd ..\n$ cd mwmlf\n$ ls\ndir bbvhpmsj\ndir mwmlf\n83589 qqvdcclf\n$ cd bbvhpmsj\n$ ls\n232123 hrvlgmjb.wrv\n137190 rlf\n21785 tghvbj.mfr\n25344 vrdrsj.swp\n$ cd ..\n$ cd mwmlf\n$ ls\ndir wnn\n$ cd wnn\n$ ls\ndir thd\n$ cd thd\n$ ls\n36125 lgt\n$ cd ..\n$ cd ..\n$ cd ..\n$ cd ..\n$ cd rlf\n$ ls\ndir fps\n128272 lggpfj.gnr\n146745 lrdq.zgm\ndir mwmlf\n266383 mwmlf.wnp\ndir ncrlvggp\ndir qpgmrj\n$ cd fps\n$ ls\ndir rqjt\ndir wpqvmn\n$ cd rqjt\n$ ls\n175784 pcdtdblc.znj\n185424 wmstvdt.lhn\n$ cd ..\n$ cd wpqvmn\n$ ls\n141743 ljslzhjl\n$ cd ..\n$ cd ..\n$ cd mwmlf\n$ ls\n169015 rlf\n$ cd ..\n$ cd ncrlvggp\n$ ls\n81450 fqtrpm.mqr\n146399 jtbr\ndir nnqgqqj\n288302 qqvdcclf\n$ cd nnqgqqj\n$ ls\ndir fvbhh\n$ cd fvbhh\n$ ls\n121112 zmn.fjz\n$ cd ..\n$ cd ..\n$ cd ..\n$ cd qpgmrj\n$ ls\ndir hrvlgmjb\ndir pbc\n$ cd hrvlgmjb\n$ ls\n7858 czvpvwz\n$ cd ..\n$ cd pbc\n$ ls\n150816 tprth.gjn\n$ cd ..\n$ cd ..\n$ cd ..\n$ cd smfzmmhc\n$ ls\ndir jwvw\n184385 spbjrlv.spt\ndir trpdgl\n201578 zzhz\n$ cd jwvw\n$ ls\n47747 nrwjb\n$ cd ..\n$ cd trpdgl\n$ ls\n136682 mwmlf\n$ cd ..\n$ cd ..\n$ cd ..\n$ cd ngn\n$ ls\ndir fqbph\n282363 lscdth.lbj\ndir mwmlf\n273281 qbpmcqs\n7547 qdffbp\n223960 tprth.gjn\n$ cd fqbph\n$ ls\ndir bgtbmzj\ndir lzjf\n12361 nrwjb\ndir pdsdttz\n150218 pfvtwr.pbf\ndir rlf\n158227 sfhsszcq.tzv\n183244 smfzmmhc.drh\n$ cd bgtbmzj\n$ ls\ndir gvqhtfg\ndir jmvzv\n194008 ldpfs.qhr\ndir mtztr\n11099 nfqmvqcm.ftd\ndir szp\n153379 zrtsd.jwg\n$ cd gvqhtfg\n$ ls\ndir ntq\ndir rlf\n62076 rlf.nlc\n$ cd ntq\n$ ls\ndir wdtzhz\n$ cd wdtzhz\n$ ls\ndir tlqcbp\n$ cd tlqcbp\n$ ls\n102930 smfzmmhc\n$ cd ..\n$ cd ..\n$ cd ..\n$ cd rlf\n$ ls\n185079 tjhcqw.wrq\n$ cd ..\n$ cd ..\n$ cd jmvzv\n$ ls\ndir hfmtzbhf\n61556 jzbvmc\ndir scjpjp\n237487 sgh\ndir smfzmmhc\n$ cd hfmtzbhf\n$ ls\ndir ldt\n136126 tvrms\n$ cd ldt\n$ ls\ndir smfzmmhc\ndir wrhpzrfm\ndir zbcfv\n$ cd smfzmmhc\n$ ls\n86537 tjhcqw.wrq\n$ cd ..\n$ cd wrhpzrfm\n$ ls\n263122 smfzmmhc.shv\n73772 tvrms\n$ cd ..\n$ cd zbcfv\n$ ls\ndir vrdrsj\n$ cd vrdrsj\n$ ls\n220800 zwdbh\n$ cd ..\n$ cd ..\n$ cd ..\n$ cd ..\n$ cd scjpjp\n$ ls\n38282 rlf\n93306 rlf.blz\n$ cd ..\n$ cd smfzmmhc\n$ ls\ndir gqms\ndir mwmlf\n21587 nrwjb\n184621 zvq.lvr\n$ cd gqms\n$ ls\ndir frbs\ndir rlf\n$ cd frbs\n$ ls\ndir mpdll\n82901 zdmnm.wlc\n$ cd mpdll\n$ ls\ndir mgqd\ndir mrljj\n$ cd mgqd\n$ ls\n75558 vrdrsj.zwc\n$ cd ..\n$ cd mrljj\n$ ls\ndir qmsgj\n128171 qqvdcclf\n245942 rlf.hgt\ndir zzvbt\n$ cd qmsgj\n$ ls\n7382 mwmlf\n$ cd ..\n$ cd zzvbt\n$ ls\n285714 zltjmn\n$ cd ..\n$ cd ..\n$ cd ..\n$ cd ..\n$ cd rlf\n$ ls\n43731 gttgwfgf.cpd\ndir hvtn\n112018 jdhb.ssj\n195239 rlf.gvd\n200476 spsstb\n$ cd hvtn\n$ ls\ndir zzsfgzc\n$ cd zzsfgzc\n$ ls\n116544 vrdrsj\n$ cd ..\n$ cd ..\n$ cd ..\n$ cd ..\n$ cd mwmlf\n$ ls\ndir hmpvn\ndir shlnfcpz\n$ cd hmpvn\n$ ls\n55892 qqvdcclf\n$ cd ..\n$ cd shlnfcpz\n$ ls\n144766 fnrhmbbm.rnp\n2622 tjhcqw.wrq\n219884 tprth.gjn\n$ cd ..\n$ cd ..\n$ cd ..\n$ cd ..\n$ cd mtztr\n$ ls\ndir plngmzl\ndir qbwzhr\n$ cd plngmzl\n$ ls\n153434 dhjv.pfn\n$ cd ..\n$ cd qbwzhr\n$ ls\n26553 mcb.djg\n$ cd ..\n$ cd ..\n$ cd szp\n$ ls\n37741 qqvdcclf\ndir vrdrsj\n$ cd vrdrsj\n$ ls\ndir hznmsclb\n13218 mwmlf.vhs\n102602 rggt\n228549 rlnf.qrt\n$ cd hznmsclb\n$ ls\n17957 mwmlf.lsv\n$ cd ..\n$ cd ..\n$ cd ..\n$ cd ..\n$ cd lzjf\n$ ls\n40821 lfgh.jwg\ndir rplfgb\n$ cd rplfgb\n$ ls\n301639 zmrpm.pqn\n$ cd ..\n$ cd ..\n$ cd pdsdttz\n$ ls\n294779 tprth.gjn\n$ cd ..\n$ cd rlf\n$ ls\n37853 qst.zgc\n$ cd ..\n$ cd ..\n$ cd mwmlf\n$ ls\ndir dqvhgnj\ndir fvjtnl\ndir jfsgp\n230725 tjhcqw.wrq\n2872 tvrms\ndir zszcsbl\n$ cd dqvhgnj\n$ ls\n214328 bph\n138045 tjhcqw.wrq\n$ cd ..\n$ cd fvjtnl\n$ ls\n62568 sllvfsf\n286839 tjhcqw.wrq\n241004 zvqrg.bsg\n$ cd ..\n$ cd jfsgp\n$ ls\n116677 tprth.gjn\n151347 vtbt\n$ cd ..\n$ cd zszcsbl\n$ ls\n97786 hrvlgmjb.wzz\n$ cd ..\n$ cd ..\n$ cd ..\n$ cd qrnm\n$ ls\n70534 nrwjb\n292701 qqvdc" <> ...
+```
+
+## Part 1
+
+```elixir
+defmodule PartOne do
+  def resolve(input) do
+    IO.puts("--- Part One ---")
+    IO.puts("Result: #{run(input)}")
+  end
+
+  def run(input) do
+    input
+    |> get_dir_sizes()
+    |> Enum.filter(fn val -> val <= 100_000 end)
+    |> Enum.sum()
+  end
+
+  defp get_dir_sizes(input) do
+    input
+    |> process_input()
+    |> walk_the_tree()
+    |> Map.values()
+  end
+
+  defp walk_the_tree(commands, dir_map \\ %{}) do
+    new_map =
+      commands
+      |> Enum.reduce(dir_map, fn command, acc -> process_command(command, acc) end)
+      |> Map.drop([:cwd])
+
+    tbds = tbd_count(new_map)
+
+    if tbds == 0 do
+      new_map
+    else
+      walk_the_tree(commands, new_map)
+    end
+  end
+
+  defp tbd_count(dir_map) do
+    Map.values(dir_map)
+    |> Enum.count(fn val -> val == :tbd end)
+  end
+
+  defp process_command({:cd, ".."}, acc) do
+    cwd = Map.get(acc, :cwd)
+
+    new_cwd =
+      String.split(cwd, "/")
+      |> Enum.drop(-2)
+      |> Enum.join("/")
+      |> Kernel.<>("/")
+
+    Map.put(acc, :cwd, new_cwd)
+  end
+
+  defp process_command({:cd, "/"}, acc), do: Map.put(acc, :cwd, "/")
+
+  defp process_command({:cd, dest}, acc) do
+    cwd = Map.get(acc, :cwd)
+    new_cwd = "#{cwd}#{dest}/"
+
+    Map.put(acc, :cwd, new_cwd)
+  end
+
+  defp process_command({:ls, contents}, acc) do
+    cwd = Map.get(acc, :cwd)
+
+    if is_integer(Map.get(acc, cwd)) do
+      acc
+    else
+      new_contents = process_contents(contents, acc)
+      values = Keyword.values(new_contents)
+
+      if Enum.all?(values, fn val -> is_integer(val) end) do
+        Map.put(acc, cwd, Enum.sum(values))
+      else
+        Map.put(acc, cwd, :tbd)
+      end
+    end
+  end
+
+  defp process_contents(contents, current_map) do
+    Enum.reduce(contents, [], fn content, acc ->
+      acc ++ [process_content(content, current_map)]
+    end)
+  end
+
+  defp process_content({:dir, dir}, current_map) do
+    cwd = Map.get(current_map, :cwd)
+    fqdir = "#{cwd}#{dir}/"
+
+    case Map.get(current_map, fqdir) do
+      nil -> {:dir, fqdir}
+      :tbd -> {:dir, fqdir}
+      size -> {:file, size}
+    end
+  end
+
+  defp process_content({file, size}, _), do: {file, size}
+
+  defp process_input(input) do
+    input
+    |> String.split("\n", trim: true)
+    |> Enum.join(" ")
+    |> String.split("$ ")
+    |> Enum.map(&String.trim/1)
+    |> Enum.reject(fn line -> line == "" end)
+    |> Enum.map(&process_code/1)
+  end
+
+  defp process_code(code) do
+    case String.slice(code, 0, 2) do
+      "cd" -> process_cd(code)
+      "ls" -> process_ls(code)
+    end
+  end
+
+  defp process_cd(code) do
+    [_, dest] = String.split(code, ~r{\bcd })
+    {:cd, dest}
+  end
+
+  defp process_ls(code) do
+    [_, contents] = String.split(code, ~r{\bls })
+
+    {:ls,
+     contents
+     |> String.split()
+     |> Enum.chunk_every(2)
+     |> Enum.map(&process_ls_unit/1)}
+  end
+
+  defp process_ls_unit(["dir", dir_name]), do: {:dir, dir_name}
+  defp process_ls_unit([size, _]), do: {:file, String.to_integer(size)}
+end
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+{:module, PartOne, <<70, 79, 82, 49, 0, 0, 29, ...>>, {:process_ls_unit, 1}}
+```
+
+<!-- livebook:{"reevaluate_automatically":true} -->
+
+```elixir
+input
+|> PartOne.resolve()
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+--- Part One ---
+Result: 1325919
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+:ok
+```
+
+<!-- livebook:{"reevaluate_automatically":true} -->
+
+```elixir
+ExUnit.start(autorun: false)
+
+defmodule PartOneTest do
+  use ExUnit.Case, async: true
+  import PartOne
+
+  test "part one" do
+    input = "$ cd /
+$ ls
+dir a
+14848514 b.txt
+8504156 c.dat
+dir d
+$ cd a
+$ ls
+dir e
+29116 f
+2557 g
+62596 h.lst
+$ cd e
+$ ls
+584 i
+$ cd ..
+$ cd ..
+$ cd d
+$ ls
+4060174 j
+8033020 d.log
+5626152 d.ext
+7214296 k"
+    result = run(input)
+    assert result == 95437
+  end
+end
+
+ExUnit.run()
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+.
+Finished in 0.00 seconds (0.00s async, 0.00s sync)
+1 test, 0 failures
+
+Randomized with seed 645353
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+%{excluded: 0, failures: 0, skipped: 0, total: 1}
+```
+
+## Part 2
+
+```elixir
+defmodule PartTwo do
+  @disk_size 70_000_000
+  @space_needed 30_000_000
+
+  def resolve(input) do
+    IO.puts("--- Part One ---")
+    IO.puts("Result: #{run(input)}")
+  end
+
+  def run(input) do
+    input
+    |> get_dir_sizes()
+    |> Enum.sort()
+    |> find_best_dir()
+  end
+
+  defp get_dir_sizes(input) do
+    input
+    |> process_input()
+    |> walk_the_tree()
+    |> Map.values()
+  end
+
+  defp walk_the_tree(commands, dir_map \\ %{}) do
+    new_map =
+      commands
+      |> Enum.reduce(dir_map, fn command, acc -> process_command(command, acc) end)
+      |> Map.drop([:cwd])
+
+    tbds = tbd_count(new_map)
+
+    if tbds == 0 do
+      new_map
+    else
+      walk_the_tree(commands, new_map)
+    end
+  end
+
+  defp tbd_count(dir_map) do
+    Map.values(dir_map)
+    |> Enum.count(fn val -> val == :tbd end)
+  end
+
+  defp process_command({:cd, ".."}, acc) do
+    cwd = Map.get(acc, :cwd)
+
+    new_cwd =
+      String.split(cwd, "/")
+      |> Enum.drop(-2)
+      |> Enum.join("/")
+      |> Kernel.<>("/")
+
+    Map.put(acc, :cwd, new_cwd)
+  end
+
+  defp process_command({:cd, "/"}, acc), do: Map.put(acc, :cwd, "/")
+
+  defp process_command({:cd, dest}, acc) do
+    cwd = Map.get(acc, :cwd)
+    new_cwd = "#{cwd}#{dest}/"
+
+    Map.put(acc, :cwd, new_cwd)
+  end
+
+  defp process_command({:ls, contents}, acc) do
+    cwd = Map.get(acc, :cwd)
+
+    if is_integer(Map.get(acc, cwd)) do
+      acc
+    else
+      new_contents = process_contents(contents, acc)
+      values = Keyword.values(new_contents)
+
+      if Enum.all?(values, fn val -> is_integer(val) end) do
+        Map.put(acc, cwd, Enum.sum(values))
+      else
+        Map.put(acc, cwd, :tbd)
+      end
+    end
+  end
+
+  defp process_contents(contents, current_map) do
+    Enum.reduce(contents, [], fn content, acc ->
+      acc ++ [process_content(content, current_map)]
+    end)
+  end
+
+  defp process_content({:dir, dir}, current_map) do
+    cwd = Map.get(current_map, :cwd)
+    fqdir = "#{cwd}#{dir}/"
+
+    case Map.get(current_map, fqdir) do
+      nil -> {:dir, fqdir}
+      :tbd -> {:dir, fqdir}
+      size -> {:file, size}
+    end
+  end
+
+  defp process_content({file, size}, _), do: {file, size}
+
+  defp min_size_needed(sizes) do
+    root_dir = sizes |> Enum.take(-1) |> List.first()
+    @space_needed - (@disk_size - root_dir)
+  end
+
+  defp find_best_dir(sizes) do
+    Enum.find(sizes, fn size -> size >= min_size_needed(sizes) end)
+  end
+
+  defp process_input(input) do
+    input
+    |> String.split("\n", trim: true)
+    |> Enum.join(" ")
+    |> String.split("$ ")
+    |> Enum.map(&String.trim/1)
+    |> Enum.reject(fn line -> line == "" end)
+    |> Enum.map(&process_code/1)
+  end
+
+  defp process_code(code) do
+    case String.slice(code, 0, 2) do
+      "cd" -> process_cd(code)
+      "ls" -> process_ls(code)
+    end
+  end
+
+  defp process_cd(code) do
+    [_, dest] = String.split(code, ~r{\bcd })
+    {:cd, dest}
+  end
+
+  defp process_ls(code) do
+    [_, contents] = String.split(code, ~r{\bls })
+
+    {:ls,
+     contents
+     |> String.split()
+     |> Enum.chunk_every(2)
+     |> Enum.map(&process_ls_unit/1)}
+  end
+
+  defp process_ls_unit(["dir", dir_name]), do: {:dir, dir_name}
+  defp process_ls_unit([size, _]), do: {:file, String.to_integer(size)}
+end
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+{:module, PartTwo, <<70, 79, 82, 49, 0, 0, 31, ...>>, {:process_ls_unit, 1}}
+```
+
+<!-- livebook:{"reevaluate_automatically":true} -->
+
+```elixir
+input
+|> PartTwo.resolve()
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+--- Part One ---
+Result: 2050735
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+:ok
+```
+
+```elixir
+ExUnit.start(autorun: false)
+
+defmodule PartTwoTest do
+  use ExUnit.Case, async: true
+  import PartTwo
+
+  test "part two" do
+    input = "$ cd /
+$ ls
+dir a
+14848514 b.txt
+8504156 c.dat
+dir d
+$ cd a
+$ ls
+dir e
+29116 f
+2557 g
+62596 h.lst
+$ cd e
+$ ls
+584 i
+$ cd ..
+$ cd ..
+$ cd d
+$ ls
+4060174 j
+8033020 d.log
+5626152 d.ext
+7214296 k"
+    result = run(input)
+    assert result == 24_933_642
+  end
+end
+
+ExUnit.run()
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+.
+Finished in 0.00 seconds (0.00s async, 0.00s sync)
+1 test, 0 failures
+
+Randomized with seed 645353
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+%{excluded: 0, failures: 0, skipped: 0, total: 1}
+```

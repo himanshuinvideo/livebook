@@ -1,0 +1,294 @@
+<!-- livebook:{"autosave_interval_s":30,"persist_outputs":true} -->
+
+# Day 08
+
+```elixir
+Mix.install([
+  {:kino, "~> 0.8.0"},
+  {:kino_aoc, git: "https://github.com/ljgago/kino_aoc"}
+])
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+:ok
+```
+
+## Input
+
+```elixir
+{:ok, result} = KinoAOC.download_puzzle("2022", "8", System.fetch_env!("LB_AOC_SESSION"))
+input = result
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+"220102001303332210111144403232401113333122342344231242454143210203320302212443030013122003001101100\n002012111323310331302003042221132010432132445255133124455255223004414440440003301012203200022100210\n200201202011003110423331304200331011531224544245554512113213335525210302033141324322321031312102110\n100020212221032131124244103404003222433224521422334123232422124515312313433224100204010121132311000\n200113321032110240111004030043155443522233113242534443312241445211112450323031312112213000023232100\n000123222130133422212242344055134444215311551422533215421415442551425225432130430124043210211111310\n220013001310041302023441034332322423241253523413533421512551432233114553552003013120121302130121320\n103122021001324130041021443134551553414353255343356623553131221454542451225451442032131420112320101\n012123121220242033212021343121244143344324534625253522262464534215422121222134240012234133102111220\n330310331223230000003152443554413335326665536266322522652335566553114314142351411020403401413302112\n033203120011110011132251145135331144533354253453463224233644324632453434135523253300131220303213123\n320111230330142103134512313345346434643654336344264466663434525446644113511452351451422214014013322\n001132233321313303345535112443242622242446334234425332545346556362543355243332135453212444110331303\n112033313244310423153325243233225655536462366623456645652435535435325433454445524512423111021132122\n313313043314211444453212142362452645555543222645663664243443432442223333565131234141351344321344102\n131230133213133211232332525334634543566623665537334334547734623265434432455254451425235432443212211\n033344041000113254352455455346236225633465644343664557364344535543336532242444234311533433344140212\n213210413044552341333323656654354424366446744766744473434577534775255332236334522521333331002022121\n223112203001555435245233523555243667443447767433564533557556755677732432236462355155425414244240300\n031112340101154335334634566542526467535374465476634474475365364377737233444423444335143215320411041\n010203132113252122424352345322745777347553756767766736766655557657446763326426264545545441510322304\n321034434351253424555342636457546533636345766763737363536656637564757633453436366225532223151301123\n140333103113245552456543556436376775537436555564765867677377566536736367466446544545111231522432042\n344202325543255413523362252766476773354345756567775846446585764655346457333656245566142114252141442\n300442033331415536626644654454735373634646576484854768867856765345656633644236246242335514321313432\n422444251112412665556253554536437336675554766648744646768865576456545754676632532244262315154431312\n202304543452455552253665657746647784558765457564785778845788767784833536336745445354462312521531440\n443202253112536253525354345435633886668445868754667447674764886554756567546737654246334325241222041\n444423415155442365223265743454556684558776766888858567565767784775755635475565754224462452335222241\n344303321125225553466564654375755674684544768955877976656855558645744675543644552655335222244234041\n300235531322254555657355344757787845684787759755989576658884775746464854347454745445252251123331200\n202355355135453623555734775437867546864765789685787875887555685885564677653753475626332543431524440\n123112125155234436477477667347767767746589595765887578895688659457644647637353775542533353231324344\n410231223354354564265577744565557576558859695696978987776856795557766747576576743622336235154122541\n144345221145432366464547578854445477995896778965569886979678656986544557875776343376245336222211154\n041355524153432432536456778856655655586558689789676558987567866689878584574356765462664355555422315\n043213424536224446535754387584686658555998969679778967988975666897764557557733673744622262412325233\n101514245332544663477377677875765977975768579996797978899567698975768865784644537776543454651544223\n055515332353232236436447686544477656596959996666689896787797795969665874555543664764442344265232243\n222545542226664544634434558757485778565956766669899769668998978795896868888674777634532432531545351\n434314333334362377634654477865886799965779778887799678789966958767788684856666356767346645644343" <> ...
+```
+
+## Part 1
+
+<!-- livebook:{"reevaluate_automatically":true} -->
+
+```elixir
+defmodule PartOne do
+  def resolve(input) do
+    IO.puts("--- Part One ---")
+    IO.puts("Result: #{run(input)}")
+  end
+
+  def run(input) do
+    input
+    |> String.split("\n", trim: true)
+    |> Enum.map(fn x -> String.split(x, "", trim: true) end)
+    |> then(fn x ->
+      max_row = Enum.count(x)
+      max_col = Enum.at(x, 0) |> Enum.count()
+
+      Enum.with_index(x, fn element, row_index ->
+        Enum.with_index(element, fn _tree, col_index ->
+          if row_index == 0 or row_index == max_row - 1 or col_index == 0 or
+               col_index == max_col - 1 do
+            true
+          else
+            check_visible(x, row_index, col_index)
+          end
+        end)
+      end)
+    end)
+    |> Enum.reduce(0, fn row, count ->
+      count +
+        Enum.reduce(row, 0, fn tree, c ->
+          if tree do
+            c + 1
+          else
+            c
+          end
+        end)
+    end)
+  end
+
+  defp check_visible(x, row_index, col_index) do
+    row = Enum.at(x, row_index)
+    row_left = row |> Enum.slice(0..(col_index - 1))
+    row_right = row |> Enum.slice((col_index + 1)..(Enum.count(x) - 1))
+    elem = row |> Enum.at(col_index)
+    col = Enum.map(x, fn x -> Enum.at(x, col_index) end)
+    col_top = col |> Enum.slice(0..(row_index - 1))
+    col_bottom = col |> Enum.slice((row_index + 1)..(Enum.count(col) - 1))
+
+    visible =
+      is_visible(row_left, elem) || is_visible(row_right, elem) ||
+        is_visible(col_top, elem) || is_visible(col_bottom, elem)
+
+    visible
+  end
+
+  defp is_visible(row, elem) do
+    Enum.all?(row, fn x -> x < elem end)
+  end
+end
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+{:module, PartOne, <<70, 79, 82, 49, 0, 0, 19, ...>>, {:is_visible, 2}}
+```
+
+<!-- livebook:{"reevaluate_automatically":true} -->
+
+```elixir
+input
+|> PartOne.resolve()
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+--- Part One ---
+Result: 1789
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+:ok
+```
+
+<!-- livebook:{"reevaluate_automatically":true} -->
+
+```elixir
+ExUnit.start(autorun: false)
+
+defmodule PartOneTest do
+  use ExUnit.Case, async: true
+  import PartOne
+
+  test "part one" do
+    input = "30373
+25512
+65332
+33549
+35390"
+    result = run(input)
+    assert result == 21
+  end
+end
+
+ExUnit.run()
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+.
+Finished in 0.00 seconds (0.00s async, 0.00s sync)
+1 test, 0 failures
+
+Randomized with seed 61016
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+%{excluded: 0, failures: 0, skipped: 0, total: 1}
+```
+
+## Part 2
+
+```elixir
+defmodule PartTwo do
+  def resolve(input) do
+    IO.puts("--- Part One ---")
+    IO.puts("Result: #{run(input)}")
+  end
+
+  def run(input) do
+    input
+    |> String.split("\n", trim: true)
+    |> Enum.map(fn x ->
+      String.split(x, "", trim: true)
+      |> Enum.map(fn x -> String.to_integer(x) end)
+    end)
+    |> then(fn x ->
+      max_row = Enum.count(x)
+      max_col = Enum.at(x, 0) |> Enum.count()
+
+      Enum.with_index(x, fn element, row_index ->
+        Enum.with_index(element, fn _tree, col_index ->
+          if row_index == 0 or row_index == max_row - 1 or col_index == 0 or
+               col_index == max_col - 1 do
+            0
+          else
+            calc_score(x, row_index, col_index)
+          end
+        end)
+      end)
+    end)
+    |> Enum.map(fn row -> Enum.max(row) end)
+    |> Enum.max()
+  end
+
+  defp calc_score(x, row_index, col_index) do
+    row = Enum.at(x, row_index)
+    row_left = row |> Enum.slice(0..(col_index - 1)) |> Enum.reverse()
+    row_right = row |> Enum.slice((col_index + 1)..(Enum.count(x) - 1))
+    elem = row |> Enum.at(col_index)
+    col = Enum.map(x, fn x -> Enum.at(x, col_index) end)
+    col_top = col |> Enum.slice(0..(row_index - 1)) |> Enum.reverse()
+    col_bottom = col |> Enum.slice((row_index + 1)..(Enum.count(col) - 1))
+
+    scenic_score =
+      [
+        count_visible(row_left, elem),
+        count_visible(row_right, elem),
+        count_visible(col_top, elem),
+        count_visible(col_bottom, elem)
+      ]
+      |> Enum.reduce(1, fn x, acc -> acc * x end)
+
+    scenic_score
+  end
+
+  defp count_visible([], _elem) do
+    0
+  end
+
+  defp count_visible(row, elem) do
+    Enum.reduce_while(row, 0, fn x, acc ->
+      cond do
+        x < elem -> {:cont, acc + 1}
+        true -> {:halt, acc + 1}
+      end
+    end)
+  end
+end
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+{:module, PartTwo, <<70, 79, 82, 49, 0, 0, 19, ...>>, {:count_visible, 2}}
+```
+
+<!-- livebook:{"reevaluate_automatically":true} -->
+
+```elixir
+input
+|> PartTwo.resolve()
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+--- Part One ---
+Result: 314820
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+:ok
+```
+
+<!-- livebook:{"reevaluate_automatically":true} -->
+
+```elixir
+ExUnit.start(autorun: false)
+
+defmodule PartTwoTest do
+  use ExUnit.Case, async: true
+  import PartTwo
+
+  test "part one" do
+    input = "30373
+25512
+65332
+33549
+35390"
+    result = run(input)
+    assert result == 8
+  end
+end
+
+ExUnit.run()
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+.
+Finished in 0.00 seconds (0.00s async, 0.00s sync)
+1 test, 0 failures
+
+Randomized with seed 61016
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+%{excluded: 0, failures: 0, skipped: 0, total: 1}
+```

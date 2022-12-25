@@ -12,9 +12,6 @@ Mix.install(
       default_backend: EXLA.Backend,
       default_defn_options: [compiler: EXLA, client: :cuda]
     ]
-  ],
-  system_env: [
-    XLA_TARGET: "cuda118"
   ]
 )
 ```
