@@ -1,0 +1,73 @@
+<!-- livebook:{"persist_outputs":true} -->
+
+# Search and Clustering wirh exfaiss
+
+```elixir
+Mix.install([
+  {:ex_faiss, github: "elixir-nx/ex_faiss"},
+  {:nx, "~> 0.4"},
+  {:exla, "~> 0.4"}
+])
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+==> ex_faiss
+rm -rf /Users/rakshan/.cache/ex_faiss/faiss-19f7696deedc93615c3ee0ff4de22284b53e0243 && \
+	mkdir -p /Users/rakshan/.cache/ex_faiss/faiss-19f7696deedc93615c3ee0ff4de22284b53e0243 && \
+		cd /Users/rakshan/.cache/ex_faiss/faiss-19f7696deedc93615c3ee0ff4de22284b53e0243 && \
+		git init && \
+		git remote add origin https://www.github.com/facebookresearch/faiss && \
+		git fetch --depth 1 origin 19f7696deedc93615c3ee0ff4de22284b53e0243 && \
+		git checkout FETCH_HEAD && \
+		cmake -B build . -DFAISS_ENABLE_PYTHON=OFF -DBUILD_TESTING=OFF -DBUILD_SHARED_LIBS=ON -DFAISS_ENABLE_GPU=OFF && \
+		make -C build -j faiss
+Initialized empty Git repository in /Users/rakshan/.cache/ex_faiss/faiss-19f7696deedc93615c3ee0ff4de22284b53e0243/.git/
+warning: redirecting to https://github.com/facebookresearch/faiss.git/
+From https://www.github.com/facebookresearch/faiss
+ * branch            19f7696deedc93615c3ee0ff4de22284b53e0243 -> FETCH_HEAD
+Note: switching to 'FETCH_HEAD'.
+
+You are in 'detached HEAD' state. You can look around, make experimental
+changes and commit them, and you can discard any commits you make in this
+state without impacting any branches by switching back to a branch.
+
+If you want to create a new branch to retain commits you create, you may
+do so (now or later) by using -c with the switch command. Example:
+
+  git switch -c <new-branch-name>
+
+Or undo this operation with:
+
+  git switch -
+
+Turn off this advice by setting config variable advice.detachedHead to false
+
+HEAD is now at 19f7696 Updated changelog with implemented features for 1.7.3 release (#2564)
+-- The CXX compiler identification is Clang 11.1.0
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /nix/store/c52qgyvj637p95wq14hm06pjdiw69fcs-clang-wrapper-11.1.0/bin/clang++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+CMake Error at /nix/store/lm51dv6mg2xl2fpcywld7cmjwkzqkhiz-cmake-3.24.3/share/cmake-3.24/Modules/FindPackageHandleStandardArgs.cmake:230 (message):
+  Could NOT find OpenMP_CXX (missing: OpenMP_CXX_FLAGS OpenMP_CXX_LIB_NAMES)
+Call Stack (most recent call first):
+  /nix/store/lm51dv6mg2xl2fpcywld7cmjwkzqkhiz-cmake-3.24.3/share/cmake-3.24/Modules/FindPackageHandleStandardArgs.cmake:594 (_FPHSA_FAILURE_MESSAGE)
+  /nix/store/lm51dv6mg2xl2fpcywld7cmjwkzqkhiz-cmake-3.24.3/share/cmake-3.24/Modules/FindOpenMP.cmake:545 (find_package_handle_standard_args)
+  faiss/CMakeLists.txt:242 (find_package)
+
+
+-- Configuring incomplete, errors occurred!
+See also "/Users/rakshan/.cache/ex_faiss/faiss-19f7696deedc93615c3ee0ff4de22284b53e0243/build/CMakeFiles/CMakeOutput.log".
+See also "/Users/rakshan/.cache/ex_faiss/faiss-19f7696deedc93615c3ee0ff4de22284b53e0243/build/CMakeFiles/CMakeError.log".
+make: *** [Makefile:68: /Users/rakshan/.cache/ex_faiss/faiss-19f7696deedc93615c3ee0ff4de22284b53e0243/build/faiss] Error 1
+could not compile dependency :ex_faiss, "mix compile" failed. Errors may have been logged above. You can recompile this dependency with "mix deps.compile ex_faiss", update it with "mix deps.update ex_faiss" or clean it with "mix deps.clean ex_faiss"
+```
+
+## Creating an Index
+
+```elixir
+index = ExFaiss.Index.
+```

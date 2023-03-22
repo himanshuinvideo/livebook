@@ -1,0 +1,991 @@
+<!-- livebook:{"persist_outputs":true} -->
+
+# FizzBuzz
+
+```elixir
+Mix.install(
+  [
+    {:axon, "~> 0.5.1"},
+    {:nx, "~> 0.5.1"},
+    {:exla, "~> 0.5.1"},
+    {:table_rex, "~> 3.1"},
+    {:kino, "~> 0.9.0"}
+  ],
+  config: [nx: [default_backend: EXLA.Backend]]
+)
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+Resolving Hex dependencies...
+Dependency resolution completed:
+New:
+  axon 0.5.1
+  complex 0.5.0
+  elixir_make 0.7.6
+  exla 0.5.1
+  kino 0.9.0
+  nx 0.5.1
+  table 0.1.2
+  table_rex 3.1.1
+  telemetry 1.2.1
+  xla 0.4.4
+* Getting axon (Hex package)
+* Getting nx (Hex package)
+* Getting exla (Hex package)
+* Getting table_rex (Hex package)
+* Getting kino (Hex package)
+* Getting table (Hex package)
+* Getting elixir_make (Hex package)
+* Getting telemetry (Hex package)
+* Getting xla (Hex package)
+* Getting complex (Hex package)
+==> table
+Compiling 5 files (.ex)
+Generated table app
+===> Analyzing applications...
+===> Compiling telemetry
+==> complex
+Compiling 2 files (.ex)
+Generated complex app
+==> nx
+Compiling 31 files (.ex)
+Generated nx app
+==> kino
+Compiling 39 files (.ex)
+Generated kino app
+==> table_rex
+Compiling 7 files (.ex)
+Generated table_rex app
+==> axon
+Compiling 23 files (.ex)
+Generated axon app
+==> elixir_make
+Compiling 6 files (.ex)
+Generated elixir_make app
+==> xla
+Compiling 2 files (.ex)
+Generated xla app
+==> exla
+Unpacking /Users/rakshan/Library/Caches/xla/0.4.4/cache/download/xla_extension-aarch64-darwin-cpu.tar.gz into /Users/rakshan/Library/Caches/mix/installs/elixir-1.14.2-erts-13.0.4/0080508832d2eb8ea6a44452e1f40917/deps/exla/cache
+Using libexla.so from /Users/rakshan/Library/Caches/xla/exla/elixir-1.14.2-erts-13.0.4-xla-0.4.4-exla-0.5.1-4xbrruthhybd5baxjryp52phgi/libexla.so
+Compiling 21 files (.ex)
+Generated exla app
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+:ok
+```
+
+## Section
+
+```elixir
+mods = fn n -> [rem(n, 3), rem(n, 5), rem(n, 15)] end
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+#Function<42.3316493/1 in :erl_eval.expr/6>
+```
+
+```elixir
+fizzbuzz = fn n ->
+  cond do
+    # Probability of fizz = 0, buzz = 0, fizzbuzz = 1, other = 0
+    rem(n, 15) == 0 -> [0, 0, 1, 0]
+    rem(n, 3) == 0 -> [1, 0, 0, 0]
+    rem(n, 5) == 0 -> [0, 1, 0, 0]
+    true -> [0, 0, 0, 1]
+  end
+end
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+#Function<42.3316493/1 in :erl_eval.expr/6>
+```
+
+```elixir
+fizzbuzz.(1)
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+[0, 0, 0, 1]
+```
+
+```elixir
+train = for n <- 1..1000, do: Nx.tensor(mods.(n))
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+
+15:10:59.494 [info] TfrtCpuClient created.
+
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+[
+  #Nx.Tensor<
+    s64[3]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.10051>
+    [1, 1, 1]
+  >,
+  #Nx.Tensor<
+    s64[3]
+    EXLA.Backend<host:0, 0.1623007113.3978690589.7937>
+    [2, 2, 2]
+  >,
+  #Nx.Tensor<
+    s64[3]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.10052>
+    [0, 3, 3]
+  >,
+  #Nx.Tensor<
+    s64[3]
+    EXLA.Backend<host:0, 0.1623007113.3978690589.7938>
+    [1, 4, 4]
+  >,
+  #Nx.Tensor<
+    s64[3]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.10053>
+    [2, 0, 5]
+  >,
+  #Nx.Tensor<
+    s64[3]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.10054>
+    [0, 1, 6]
+  >,
+  #Nx.Tensor<
+    s64[3]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.10055>
+    [1, 2, 7]
+  >,
+  #Nx.Tensor<
+    s64[3]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.10056>
+    [2, 3, 8]
+  >,
+  #Nx.Tensor<
+    s64[3]
+    EXLA.Backend<host:0, 0.1623007113.3978690589.7939>
+    [0, 4, 9]
+  >,
+  #Nx.Tensor<
+    s64[3]
+    EXLA.Backend<host:0, 0.1623007113.3978690589.7940>
+    [1, 0, 10]
+  >,
+  #Nx.Tensor<
+    s64[3]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.10057>
+    [2, 1, 11]
+  >,
+  #Nx.Tensor<
+    s64[3]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.10058>
+    [0, 2, 12]
+  >,
+  #Nx.Tensor<
+    s64[3]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.10059>
+    [1, 3, 13]
+  >,
+  #Nx.Tensor<
+    s64[3]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.10060>
+    [2, 4, 14]
+  >,
+  #Nx.Tensor<
+    s64[3]
+    EXLA.Backend<host:0, 0.1623007113.3978690589.7941>
+    [0, 0, 0]
+  >,
+  #Nx.Tensor<
+    s64[3]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.10061>
+    [1, 1, 1]
+  >,
+  #Nx.Tensor<
+    s64[3]
+    EXLA.Backend<host:0, 0.1623007113.3978690589.7942>
+    [2, 2, 2]
+  >,
+  #Nx.Tensor<
+    s64[3]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.10062>
+    [0, 3, 3]
+  >,
+  #Nx.Tensor<
+    s64[3]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.10063>
+    [1, 4, 4]
+  >,
+  #Nx.Tensor<
+    s64[3]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.10064>
+    [2, 0, 5]
+  >,
+  #Nx.Tensor<
+    s64[3]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.10065>
+    [0, 1, 6]
+  >,
+  #Nx.Tensor<
+    s64[3]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.10066>
+    [1, 2, 7]
+  >,
+  #Nx.Tensor<
+    s64[3]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.10067>
+    [2, 3, 8]
+  >,
+  #Nx.Tensor<
+    s64[3]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.10068>
+    [0, 4, 9]
+  >,
+  #Nx.Tensor<
+    s64[3]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.10069>
+    [1, 0, 10]
+  >,
+  #Nx.Tensor<
+    s64[3]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.10070>
+    [2, 1, 11]
+  >,
+  #Nx.Tensor<
+    s64[3]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.10071>
+    [0, 2, 12]
+  >,
+  #Nx.Tensor<
+    s64[3]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.10072>
+    [1, 3, 13]
+  >,
+  #Nx.Tensor<
+    s64[3]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.10073>
+    [2, 4, 14]
+  >,
+  #Nx.Tensor<
+    s64[3]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.10074>
+    [0, 0, 0]
+  >,
+  #Nx.Tensor<
+    s64[3]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.10075>
+    [1, 1, 1]
+  >,
+  #Nx.Tensor<
+    s64[3]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.10076>
+    [2, 2, 2]
+  >,
+  #Nx.Tensor<
+    s64[3]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.10077>
+    [0, 3, 3]
+  >,
+  #Nx.Tensor<
+    s64[3]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.10078>
+    [1, 4, 4]
+  >,
+  #Nx.Tensor<
+    s64[3]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.10079>
+    [2, 0, 5]
+  >,
+  #Nx.Tensor<
+    s64[3]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.10080>
+    [0, 1, 6]
+  >,
+  #Nx.Tensor<
+    s64[3]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.10081>
+    [1, 2, 7]
+  >,
+  #Nx.Tensor<
+    s64[3]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.10082>
+    [2, 3, 8]
+  >,
+  #Nx.Tensor<
+    s64[3]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.10083>
+    [0, 4, 9]
+  >,
+  #Nx.Tensor<
+    s64[3]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.10084>
+    [1, 0, 10]
+  >,
+  #Nx.Tensor<
+    s64[3]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.10085>
+    [2, 1, 11]
+  >,
+  #Nx.Tensor<
+    s64[3]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.10086>
+    [0, 2, 12]
+  >,
+  #Nx.Tensor<
+    s64[3]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.10087>
+    [1, 3, 13]
+  >,
+  #Nx.Tensor<
+    s64[3]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.10088>
+    [2, 4, 14]
+  >,
+  #Nx.Tensor<
+    s64[3]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.10089>
+    [0, 0, 0]
+  >,
+  #Nx.Tensor<
+    s64[3]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.10090>
+    [1, 1, 1]
+  >,
+  #Nx.Tensor<
+    s64[3]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.10091>
+    [2, 2, 2]
+  >,
+  #Nx.Tensor<
+    s64[3]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.10092>
+    [0, 3, ...]
+  >,
+  #Nx.Tensor<
+    s64[3]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.10093>
+    [1, ...]
+  >,
+  #Nx.Tensor<
+    s64[3]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.10094>
+    [...]
+  >,
+  ...
+]
+```
+
+```elixir
+test = for(n <- 1..15, do: mods.(n)) |> Nx.tensor()
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+#Nx.Tensor<
+  s64[15][3]
+  EXLA.Backend<host:0, 0.1623007113.3978690587.11046>
+  [
+    [1, 1, 1],
+    [2, 2, 2],
+    [0, 3, 3],
+    [1, 4, 4],
+    [2, 0, 5],
+    [0, 1, 6],
+    [1, 2, 7],
+    [2, 3, 8],
+    [0, 4, 9],
+    [1, 0, 10],
+    [2, 1, 11],
+    [0, 2, 12],
+    [1, 3, 13],
+    [2, 4, 14],
+    [0, 0, 0]
+  ]
+>
+```
+
+```elixir
+targets = for n <- 1..1000, do: Nx.tensor([fizzbuzz.(n)])
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+[
+  #Nx.Tensor<
+    s64[1][4]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.11047>
+    [
+      [0, 0, 0, 1]
+    ]
+  >,
+  #Nx.Tensor<
+    s64[1][4]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.11048>
+    [
+      [0, 0, 0, 1]
+    ]
+  >,
+  #Nx.Tensor<
+    s64[1][4]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.11049>
+    [
+      [1, 0, 0, 0]
+    ]
+  >,
+  #Nx.Tensor<
+    s64[1][4]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.11050>
+    [
+      [0, 0, 0, 1]
+    ]
+  >,
+  #Nx.Tensor<
+    s64[1][4]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.11051>
+    [
+      [0, 1, 0, 0]
+    ]
+  >,
+  #Nx.Tensor<
+    s64[1][4]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.11052>
+    [
+      [1, 0, 0, 0]
+    ]
+  >,
+  #Nx.Tensor<
+    s64[1][4]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.11053>
+    [
+      [0, 0, 0, 1]
+    ]
+  >,
+  #Nx.Tensor<
+    s64[1][4]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.11054>
+    [
+      [0, 0, 0, 1]
+    ]
+  >,
+  #Nx.Tensor<
+    s64[1][4]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.11055>
+    [
+      [1, 0, 0, 0]
+    ]
+  >,
+  #Nx.Tensor<
+    s64[1][4]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.11056>
+    [
+      [0, 1, 0, 0]
+    ]
+  >,
+  #Nx.Tensor<
+    s64[1][4]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.11057>
+    [
+      [0, 0, 0, 1]
+    ]
+  >,
+  #Nx.Tensor<
+    s64[1][4]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.11058>
+    [
+      [1, 0, 0, 0]
+    ]
+  >,
+  #Nx.Tensor<
+    s64[1][4]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.11059>
+    [
+      [0, 0, 0, 1]
+    ]
+  >,
+  #Nx.Tensor<
+    s64[1][4]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.11060>
+    [
+      [0, 0, 0, 1]
+    ]
+  >,
+  #Nx.Tensor<
+    s64[1][4]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.11061>
+    [
+      [0, 0, 1, 0]
+    ]
+  >,
+  #Nx.Tensor<
+    s64[1][4]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.11062>
+    [
+      [0, 0, 0, 1]
+    ]
+  >,
+  #Nx.Tensor<
+    s64[1][4]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.11063>
+    [
+      [0, 0, 0, 1]
+    ]
+  >,
+  #Nx.Tensor<
+    s64[1][4]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.11064>
+    [
+      [1, 0, 0, 0]
+    ]
+  >,
+  #Nx.Tensor<
+    s64[1][4]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.11065>
+    [
+      [0, 0, 0, 1]
+    ]
+  >,
+  #Nx.Tensor<
+    s64[1][4]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.11066>
+    [
+      [0, 1, 0, 0]
+    ]
+  >,
+  #Nx.Tensor<
+    s64[1][4]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.11067>
+    [
+      [1, 0, 0, 0]
+    ]
+  >,
+  #Nx.Tensor<
+    s64[1][4]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.11068>
+    [
+      [0, 0, 0, 1]
+    ]
+  >,
+  #Nx.Tensor<
+    s64[1][4]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.11069>
+    [
+      [0, 0, 0, 1]
+    ]
+  >,
+  #Nx.Tensor<
+    s64[1][4]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.11070>
+    [
+      [1, 0, 0, 0]
+    ]
+  >,
+  #Nx.Tensor<
+    s64[1][4]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.11071>
+    [
+      [0, 1, 0, 0]
+    ]
+  >,
+  #Nx.Tensor<
+    s64[1][4]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.11072>
+    [
+      [0, 0, 0, 1]
+    ]
+  >,
+  #Nx.Tensor<
+    s64[1][4]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.11073>
+    [
+      [1, 0, 0, 0]
+    ]
+  >,
+  #Nx.Tensor<
+    s64[1][4]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.11074>
+    [
+      [0, 0, 0, 1]
+    ]
+  >,
+  #Nx.Tensor<
+    s64[1][4]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.11075>
+    [
+      [0, 0, 0, 1]
+    ]
+  >,
+  #Nx.Tensor<
+    s64[1][4]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.11076>
+    [
+      [0, 0, 1, 0]
+    ]
+  >,
+  #Nx.Tensor<
+    s64[1][4]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.11077>
+    [
+      [0, 0, 0, 1]
+    ]
+  >,
+  #Nx.Tensor<
+    s64[1][4]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.11078>
+    [
+      [0, 0, 0, 1]
+    ]
+  >,
+  #Nx.Tensor<
+    s64[1][4]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.11079>
+    [
+      [1, 0, 0, 0]
+    ]
+  >,
+  #Nx.Tensor<
+    s64[1][4]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.11080>
+    [
+      [0, 0, 0, 1]
+    ]
+  >,
+  #Nx.Tensor<
+    s64[1][4]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.11081>
+    [
+      [0, 1, 0, 0]
+    ]
+  >,
+  #Nx.Tensor<
+    s64[1][4]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.11082>
+    [
+      [1, 0, 0, 0]
+    ]
+  >,
+  #Nx.Tensor<
+    s64[1][4]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.11083>
+    [
+      [0, 0, 0, 1]
+    ]
+  >,
+  #Nx.Tensor<
+    s64[1][4]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.11084>
+    [
+      [0, 0, 0, 1]
+    ]
+  >,
+  #Nx.Tensor<
+    s64[1][4]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.11085>
+    [
+      [1, 0, 0, 0]
+    ]
+  >,
+  #Nx.Tensor<
+    s64[1][4]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.11086>
+    [
+      [0, 1, 0, 0]
+    ]
+  >,
+  #Nx.Tensor<
+    s64[1][4]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.11087>
+    [
+      [0, 0, 0, 1]
+    ]
+  >,
+  #Nx.Tensor<
+    s64[1][4]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.11088>
+    [
+      [1, 0, 0, 0]
+    ]
+  >,
+  #Nx.Tensor<
+    s64[1][4]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.11089>
+    [
+      [0, 0, 0, 1]
+    ]
+  >,
+  #Nx.Tensor<
+    s64[1][4]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.11090>
+    [
+      [0, 0, 0, 1]
+    ]
+  >,
+  #Nx.Tensor<
+    s64[1][4]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.11091>
+    [
+      [0, 0, 1, 0]
+    ]
+  >,
+  #Nx.Tensor<
+    s64[1][4]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.11092>
+    [
+      [0, 0, 0, 1]
+    ]
+  >,
+  #Nx.Tensor<
+    s64[1][4]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.11093>
+    [
+      [0, 0, 0, ...]
+    ]
+  >,
+  #Nx.Tensor<
+    s64[1][4]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.11094>
+    [
+      [1, 0, ...]
+    ]
+  >,
+  #Nx.Tensor<
+    s64[1][4]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.11095>
+    [
+      [0, ...]
+    ]
+  >,
+  #Nx.Tensor<
+    s64[1][4]
+    EXLA.Backend<host:0, 0.1623007113.3978690587.11096>
+    [
+      ...
+    ]
+  >,
+  ...
+]
+```
+
+```elixir
+model =
+  Axon.input("fizzbuzz", shape: {nil, 3})
+  |> Axon.dense(10, activation: :relu)
+  |> Axon.dense(4, activation: :softmax)
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+#Axon<
+  inputs: %{"fizzbuzz" => {nil, 3}}
+  outputs: "softmax_0"
+  nodes: 5
+>
+```
+
+```elixir
+Axon.Display.as_table(model, Nx.template({1, 3}, :s64)) |> IO.puts()
+```
+
+<!-- livebook:{"output":true} -->
+
+```
++------------------------------------------------------------------------------------------------------+
+|                                                Model                                                 |
++==================================+=============+==============+=================+====================+
+| Layer                            | Input Shape | Output Shape | Options         | Parameters         |
++==================================+=============+==============+=================+====================+
+| fizzbuzz ( input )               | []          | {1, 3}       | shape: {nil, 3} |                    |
+|                                  |             |              | optional: false |                    |
++----------------------------------+-------------+--------------+-----------------+--------------------+
+| dense_0 ( dense["fizzbuzz"] )    | [{1, 3}]    | {1, 10}      |                 | kernel: f32[3][10] |
+|                                  |             |              |                 | bias: f32[10]      |
++----------------------------------+-------------+--------------+-----------------+--------------------+
+| relu_0 ( relu["dense_0"] )       | [{1, 10}]   | {1, 10}      |                 |                    |
++----------------------------------+-------------+--------------+-----------------+--------------------+
+| dense_1 ( dense["relu_0"] )      | [{1, 10}]   | {1, 4}       |                 | kernel: f32[10][4] |
+|                                  |             |              |                 | bias: f32[4]       |
++----------------------------------+-------------+--------------+-----------------+--------------------+
+| softmax_0 ( softmax["dense_1"] ) | [{1, 4}]    | {1, 4}       |                 |                    |
++----------------------------------+-------------+--------------+-----------------+--------------------+
+Total Parameters: 84
+Total Parameters Memory: 336 bytes
+
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+:ok
+```
+
+```elixir
+Axon.Display.as_graph(model, Nx.template({1, 3}, :s64))
+```
+
+<!-- livebook:{"output":true} -->
+
+```mermaid
+graph TD;
+13[/"fizzbuzz (:input) {1, 3}"/];
+14["dense_0 (:dense) {1, 10}"];
+15["relu_0 (:relu) {1, 10}"];
+16["dense_1 (:dense) {1, 4}"];
+17["softmax_0 (:softmax) {1, 4}"];
+16 --> 17;
+15 --> 16;
+14 --> 15;
+13 --> 14;
+```
+
+```elixir
+data =
+  1..1000
+  |> Stream.map(fn n ->
+    tensor = Nx.tensor([mods.(n)])
+    label = Nx.tensor([fizzbuzz.(n)])
+    {tensor, label}
+  end)
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+#Stream<[enum: 1..1000, funs: [#Function<48.124013645/1 in Stream.map/2>]]>
+```
+
+```elixir
+params =
+  model
+  |> Axon.Loop.trainer(:categorical_cross_entropy, Axon.Optimizers.adamw(0.005))
+  |> Axon.Loop.metric(:accuracy)
+  |> Axon.Loop.run(data, %{}, epochs: 5, compiler: EXLA)
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+
+15:17:58.654 [debug] Forwarding options: [compiler: EXLA] to JIT compiler
+Epoch: 0, Batch: 950, accuracy: 0.9158784 loss: 0.3955561
+Epoch: 1, Batch: 950, accuracy: 1.0000000 loss: 0.2113254
+Epoch: 2, Batch: 950, accuracy: 1.0000000 loss: 0.1426940
+Epoch: 3, Batch: 950, accuracy: 1.0000000 loss: 0.1074346
+Epoch: 4, Batch: 950, accuracy: 1.0000000 loss: 0.0860523
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+%{
+  "dense_0" => %{
+    "bias" => #Nx.Tensor<
+      f32[10]
+      EXLA.Backend<host:0, 0.1623007113.3978690577.258808>
+      [-0.042269978672266006, 0.0, 1.9196816682815552, 0.01660083420574665, 0.7941468358039856, 1.4397428035736084, 1.5058162212371826, 0.03622683510184288, -0.10092532634735107, 0.5218181014060974]
+    >,
+    "kernel" => #Nx.Tensor<
+      f32[3][10]
+      EXLA.Backend<host:0, 0.1623007113.3978690577.258809>
+      [
+        [0.16734740138053894, -0.10626289993524551, -4.037785053253174, -1.6120307445526123, -1.3427751064300537, -2.345513343811035, 0.8081691265106201, 2.50365948677063, 0.49454644322395325, -1.2651739120483398],
+        [0.10597733408212662, -0.21395926177501678, 0.24739858508110046, 0.27685025334358215, 1.48235285282135, 0.015700913965702057, -2.684476375579834, 0.7360167503356934, 0.3081551492214203, -0.46458956599235535],
+        [-0.2988255023956299, -0.569728434085846, 0.4854811131954193, 0.5067737698554993, 0.3781144917011261, 0.29420384764671326, 0.2774445712566376, 0.9394006729125977, -0.7755507230758667, 0.2194211483001709]
+      ]
+    >
+  },
+  "dense_1" => %{
+    "bias" => #Nx.Tensor<
+      f32[4]
+      EXLA.Backend<host:0, 0.1623007113.3978690577.258810>
+      [-0.1028248518705368, -0.7923071384429932, 0.8074134588241577, 0.22128091752529144]
+    >,
+    "kernel" => #Nx.Tensor<
+      f32[10][4]
+      EXLA.Backend<host:0, 0.1623007113.3978690577.258811>
+      [
+        [-0.008159450255334377, 0.525536835193634, -0.31904321908950806, 0.08173605054616928],
+        [-0.479378879070282, -0.14598749577999115, 0.20385755598545074, -0.5622449517250061],
+        [0.5582160353660583, -0.0655285194516182, 1.2706323862075806, -0.8770636916160583],
+        [0.623023509979248, 0.008485288359224796, -1.0790836811065674, -0.053042806684970856],
+        [0.8895511627197266, -1.1578261852264404, 0.009290429763495922, 0.009255134500563145],
+        [0.17620179057121277, -0.010672553442418575, 0.8719890713691711, -0.583444356918335],
+        [-1.4218872785568237, 1.2568758726119995, 1.9537451267242432, -2.168077230453491],
+        [-0.6225107312202454, 0.20712487399578094, -1.844459056854248, 1.031597375869751],
+        [0.4422478973865509, 0.5520014762878418, 0.49499645829200745, 0.28010842204093933],
+        [0.5368578433990479, 0.029110711067914963, 0.8334208726882935, -0.4715330898761749]
+      ]
+    >
+  }
+}
+```
+
+```elixir
+{_init_fn, predict_fn} = Axon.build(model)
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+{#Function<135.4924062/2 in Nx.Defn.Compiler.fun/2>,
+ #Function<135.4924062/2 in Nx.Defn.Compiler.fun/2>}
+```
+
+```elixir
+guess = fn x ->
+  mod = Nx.tensor([mods.(x)])
+
+  case predict_fn.(params, mod) |> Nx.argmax() |> Nx.to_flat_list() do
+    [0] -> "fizz"
+    [1] -> "buzz"
+    [2] -> "fizzbuzz"
+    [3] -> "other"
+  end
+end
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+#Function<42.3316493/1 in :erl_eval.expr/6>
+```
+
+```elixir
+guess.(3) |> IO.inspect(label: "3")
+guess.(5) |> IO.inspect(label: "5")
+guess.(15) |> IO.inspect(label: "15")
+guess.(16) |> IO.inspect(label: "16")
+guess.(15_432_115) |> IO.inspect(label: "15,432,115")
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+3: "fizz"
+5: "buzz"
+15: "fizzbuzz"
+16: "other"
+15,432,115: "buzz"
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+"buzz"
+```

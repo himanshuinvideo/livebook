@@ -1,0 +1,22 @@
+# Object Detection in Elixir using Axon
+
+```elixir
+Mix.install(
+  [
+    {:kino, "~> 0.8.1"},
+    {:nx, "~> 0.5.1", override: true},
+    {:nx_image, "~> 0.1.0"},
+    {:exla, "~> 0.4.2"},
+    {:axon_onnx, "~> 0.4.0"},
+    {:yolo, git: "https://github.com/hansihe/yolov8_elixir.git"},
+    {:image, "~> 0.21.0"}
+  ],
+  config: [nx: [default_backend: EXLA.Backend]]
+)
+```
+
+## Section
+
+```elixir
+
+```
