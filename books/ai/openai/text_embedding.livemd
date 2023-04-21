@@ -1,0 +1,138 @@
+# Open AI Text Embedings
+
+```elixir
+Mix.install([
+  {:req, "~> 0.3.6"}
+])
+```
+
+## Library
+
+```elixir
+defmodule OpenAi.Client do
+  @type ok_tuple(value) :: {:ok, value}
+  @type error_tuple :: {:error, any()}
+
+  require Logger
+
+  @openai_timeout 120 * 1000
+
+  @spec build_req :: Req.Request.t()
+  defp build_req do
+    host = "https://api.openai.com"
+    secret_key = System.fetch_env!("LB_" <> "OPEN_AI_API_KEY")
+
+    headers = %{
+      "Authorization" => "Bearer #{secret_key}"
+    }
+
+    Req.new(
+      base_url: host,
+      headers: headers,
+      receive_timeout: @openai_timeout,
+      max_retries: 2
+    )
+  end
+
+  @spec fetch_embedding(String.t(), String.t() | list(String.t())) ::
+          ok_tuple(list()) | error_tuple()
+  def fetch_embedding(model, input) do
+    payload = %{"model" => model, "input" => input}
+
+    build_req()
+    |> Req.post(
+      url: "/v1/embeddings",
+      json: payload,
+      retry: fn res -> retry_fun(res, "EMBEDDINGS") end
+    )
+    |> process_response(:text_embedding_failed)
+    |> then(fn result ->
+      case result do
+        {:ok, data} ->
+          data
+          |> Map.get("data")
+          |> Enum.map(fn embedding ->
+            %{index: embedding["index"], embedding: embedding["embedding"]}
+          end)
+          |> then(fn result -> {:ok, result} end)
+
+        {:error, error} ->
+          {:error, error}
+      end
+    end)
+  end
+
+  @spec process_response({:ok, Req.Response.t()} | error_tuple(), atom()) ::
+          ok_tuple(binary() | term()) | error_tuple()
+  defp process_response({:ok, res}, _error_code) when res.status < 400, do: {:ok, res.body}
+
+  defp process_response({:ok, res}, error_code) do
+    Logger.error("[OPENAI_REQUEST] #{inspect(error_code)}: res #{inspect(res)}")
+    {:error, error_code}
+  end
+
+  defp process_response({:error, error}, error_code) do
+    error |> Kernel.inspect() |> Logger.error()
+    {:error, error_code}
+  end
+
+  defp retry_fun(%Req.Response{} = res, source) do
+    if res.status >= 400 do
+      Logger.error("[OPENAI_REQUEST][#{source}] HTTP Error: #{inspect(res.status)}, retrying...")
+      # retry on 4xx or 5xx
+      true
+    else
+      false
+    end
+  end
+
+  defp retry_fun(%Mint.TransportError{} = e, source) do
+    # retry on transport errors
+    Logger.error("[OPENAI_REQUEST][#{source}] Transport Error: #{inspect(e)}")
+    true
+  end
+
+  defp retry_fun(x, source) do
+    Logger.debug("[OPENAI_REQUEST][#{source}] Unknown retry function param: #{inspect(x)}")
+    false
+  end
+end
+```
+
+```elixir
+defmodule OpenAi do
+  @type ok_tuple(value) :: {:ok, value}
+  @type error_tuple :: {:error, any()}
+
+  require Logger
+
+  alias OpenAi.Client
+
+  @text_embedding_model "text-embedding-ada-002"
+
+  @spec text_embedding(String.t() | list(String.t())) :: ok_tuple(list()) | error_tuple()
+  def text_embedding(input) do
+    case Client.fetch_embedding(@text_embedding_model, input) do
+      {:ok, result} ->
+        Logger.debug("[OPENAI][TEXT_EMBEDDING] fetch_text_embedding success")
+        {:ok, result}
+
+      {:error, reason} ->
+        Logger.error("[OPENAI][ERROR] fetch_text_embedding failed, #{inspect(reason)}")
+        {:error, reason}
+    end
+  end
+end
+```
+
+## Usage
+
+```elixir
+
+```
+
+```elixir
+OpenAi.text_embedding(["Hello", "world"])
+```
+
+<!-- livebook:{"offset":3250,"stamp":{"token":"QTEyOEdDTQ.oSGbkKQCJG-DIchCfykWqzOrXzVPLtQhW4AVPvInzXmCkBFhooLCvKbXG0Y.o2KAmi0QAtjQhS1Q.LfzL7sA-cw3017njp_6MFiaNbwOyvxZRXHRL4ElFZ-dHrH7_8MNi1Vj5iLRS9Q2w-VKw.hauwjpVxytTvEnZv1ZXRPA","version":1}} -->

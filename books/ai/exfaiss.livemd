@@ -14,60 +14,64 @@ Mix.install([
 
 ```
 ==> ex_faiss
-rm -rf /Users/rakshan/.cache/ex_faiss/faiss-19f7696deedc93615c3ee0ff4de22284b53e0243 && \
-	mkdir -p /Users/rakshan/.cache/ex_faiss/faiss-19f7696deedc93615c3ee0ff4de22284b53e0243 && \
-		cd /Users/rakshan/.cache/ex_faiss/faiss-19f7696deedc93615c3ee0ff4de22284b53e0243 && \
-		git init && \
-		git remote add origin https://www.github.com/facebookresearch/faiss && \
-		git fetch --depth 1 origin 19f7696deedc93615c3ee0ff4de22284b53e0243 && \
-		git checkout FETCH_HEAD && \
-		cmake -B build . -DFAISS_ENABLE_PYTHON=OFF -DBUILD_TESTING=OFF -DBUILD_SHARED_LIBS=ON -DFAISS_ENABLE_GPU=OFF && \
-		make -C build -j faiss
-Initialized empty Git repository in /Users/rakshan/.cache/ex_faiss/faiss-19f7696deedc93615c3ee0ff4de22284b53e0243/.git/
-warning: redirecting to https://github.com/facebookresearch/faiss.git/
-From https://www.github.com/facebookresearch/faiss
- * branch            19f7696deedc93615c3ee0ff4de22284b53e0243 -> FETCH_HEAD
-Note: switching to 'FETCH_HEAD'.
+cp -a /Users/rakshan/.cache/ex_faiss/faiss-19f7696deedc93615c3ee0ff4de22284b53e0243/build/faiss cache/lib
+clang++ -I/nix/store/3ra4m505v0433vjf8xm2g2wnx8hbahms-erlang-25.1.2/lib/erlang/erts-13.1.2/include -I/Users/rakshan/.cache/ex_faiss/faiss-19f7696deedc93615c3ee0ff4de22284b53e0243 -fPIC -O3 -shared -std=c++14 c_src/ex_faiss.cc c_src/ex_faiss/nif_util.cc c_src/ex_faiss/index.cc \
+	c_src/ex_faiss/clustering.cc -o cache/libex_faiss.so -Lcache/lib -lfaiss -flat_namespace -undefined suppress
+ld: warning: direct access in function 'faiss::Cloner::clone_Index(faiss::Index const*)' from file '/nix/store/f098amzvk2fgd1wjmb4f6da6kwwjsr7l-faiss-1.7.2/lib/libfaiss.a(clone_index.cpp.o)' to global weak symbol 'typeinfo for faiss::IndexIDMapTemplate<faiss::Index>' from file '/nix/store/f098amzvk2fgd1wjmb4f6da6kwwjsr7l-faiss-1.7.2/lib/libfaiss.a(MetaIndexes.cpp.o)' means the weak symbol cannot be overridden at runtime. This was likely caused by different translation units being compiled with different visibility settings.
+ld: warning: direct access in function 'faiss::Cloner::clone_Index(faiss::Index const*)' from file '/nix/store/f098amzvk2fgd1wjmb4f6da6kwwjsr7l-faiss-1.7.2/lib/libfaiss.a(clone_index.cpp.o)' to global weak symbol 'typeinfo for faiss::IndexIDMapTemplate<faiss::Index>' from file '/nix/store/f098amzvk2fgd1wjmb4f6da6kwwjsr7l-faiss-1.7.2/lib/libfaiss.a(MetaIndexes.cpp.o)' means the weak symbol cannot be overridden at runtime. This was likely caused by different translation units being compiled with different visibility settings.
+ld: warning: direct access in function 'faiss::write_index(faiss::Index const*, faiss::IOWriter*)' from file '/nix/store/f098amzvk2fgd1wjmb4f6da6kwwjsr7l-faiss-1.7.2/lib/libfaiss.a(index_write.cpp.o)' to global weak symbol 'typeinfo for faiss::IndexIDMap2Template<faiss::Index>' from file '/nix/store/f098amzvk2fgd1wjmb4f6da6kwwjsr7l-faiss-1.7.2/lib/libfaiss.a(MetaIndexes.cpp.o)' means the weak symbol cannot be overridden at runtime. This was likely caused by different translation units being compiled with different visibility settings.
+ld: warning: direct access in function 'faiss::write_index(faiss::Index const*, faiss::IOWriter*)' from file '/nix/store/f098amzvk2fgd1wjmb4f6da6kwwjsr7l-faiss-1.7.2/lib/libfaiss.a(index_write.cpp.o)' to global weak symbol 'typeinfo for faiss::IndexIDMap2Template<faiss::Index>' from file '/nix/store/f098amzvk2fgd1wjmb4f6da6kwwjsr7l-faiss-1.7.2/lib/libfaiss.a(MetaIndexes.cpp.o)' means the weak symbol cannot be overridden at runtime. This was likely caused by different translation units being compiled with different visibility settings.
+ld: warning: direct access in function 'faiss::write_index(faiss::Index const*, faiss::IOWriter*)' from file '/nix/store/f098amzvk2fgd1wjmb4f6da6kwwjsr7l-faiss-1.7.2/lib/libfaiss.a(index_write.cpp.o)' to global weak symbol 'typeinfo for faiss::IndexIDMapTemplate<faiss::Index>' from file '/nix/store/f098amzvk2fgd1wjmb4f6da6kwwjsr7l-faiss-1.7.2/lib/libfaiss.a(MetaIndexes.cpp.o)' means the weak symbol cannot be overridden at runtime. This was likely caused by different translation units being compiled with different visibility settings.
+ld: warning: direct access in function 'faiss::write_index(faiss::Index const*, faiss::IOWriter*)' from file '/nix/store/f098amzvk2fgd1wjmb4f6da6kwwjsr7l-faiss-1.7.2/lib/libfaiss.a(index_write.cpp.o)' to global weak symbol 'typeinfo for faiss::IndexIDMapTemplate<faiss::Index>' from file '/nix/store/f098amzvk2fgd1wjmb4f6da6kwwjsr7l-faiss-1.7.2/lib/libfaiss.a(MetaIndexes.cpp.o)' means the weak symbol cannot be overridden at runtime. This was likely caused by different translation units being compiled with different visibility settings.
+ld: warning: direct access in function 'faiss::write_index_binary(faiss::IndexBinary const*, faiss::IOWriter*)' from file '/nix/store/f098amzvk2fgd1wjmb4f6da6kwwjsr7l-faiss-1.7.2/lib/libfaiss.a(index_write.cpp.o)' to global weak symbol 'typeinfo for faiss::IndexIDMap2Template<faiss::IndexBinary>' from file '/nix/store/f098amzvk2fgd1wjmb4f6da6kwwjsr7l-faiss-1.7.2/lib/libfaiss.a(MetaIndexes.cpp.o)' means the weak symbol cannot be overridden at runtime. This was likely caused by different translation units being compiled with different visibility settings.
+ld: warning: direct access in function 'faiss::write_index_binary(faiss::IndexBinary const*, faiss::IOWriter*)' from file '/nix/store/f098amzvk2fgd1wjmb4f6da6kwwjsr7l-faiss-1.7.2/lib/libfaiss.a(index_write.cpp.o)' to global weak symbol 'typeinfo for faiss::IndexIDMap2Template<faiss::IndexBinary>' from file '/nix/store/f098amzvk2fgd1wjmb4f6da6kwwjsr7l-faiss-1.7.2/lib/libfaiss.a(MetaIndexes.cpp.o)' means the weak symbol cannot be overridden at runtime. This was likely caused by different translation units being compiled with different visibility settings.
+ld: warning: direct access in function 'faiss::write_index_binary(faiss::IndexBinary const*, faiss::IOWriter*)' from file '/nix/store/f098amzvk2fgd1wjmb4f6da6kwwjsr7l-faiss-1.7.2/lib/libfaiss.a(index_write.cpp.o)' to global weak symbol 'typeinfo for faiss::IndexIDMapTemplate<faiss::IndexBinary>' from file '/nix/store/f098amzvk2fgd1wjmb4f6da6kwwjsr7l-faiss-1.7.2/lib/libfaiss.a(MetaIndexes.cpp.o)' means the weak symbol cannot be overridden at runtime. This was likely caused by different translation units being compiled with different visibility settings.
+ld: warning: direct access in function 'faiss::write_index_binary(faiss::IndexBinary const*, faiss::IOWriter*)' from file '/nix/store/f098amzvk2fgd1wjmb4f6da6kwwjsr7l-faiss-1.7.2/lib/libfaiss.a(index_write.cpp.o)' to global weak symbol 'typeinfo for faiss::IndexIDMapTemplate<faiss::IndexBinary>' from file '/nix/store/f098amzvk2fgd1wjmb4f6da6kwwjsr7l-faiss-1.7.2/lib/libfaiss.a(MetaIndexes.cpp.o)' means the weak symbol cannot be overridden at runtime. This was likely caused by different translation units being compiled with different visibility settings.
+install_name_tool cache/libex_faiss.so -change @rpath/libfaiss.dylib @loader_path/lib/libfaiss.dylib
+Compiling 5 files (.ex)
 
-You are in 'detached HEAD' state. You can look around, make experimental
-changes and commit them, and you can discard any commits you make in this
-state without impacting any branches by switching back to a branch.
+12:39:13.865 [warn] The on_load function for module Elixir.ExFaiss.NIF returned:
+{:error,
+ {:load_failed,
+  'Failed to load NIF library: \'dlopen(/Users/rakshan/Library/Caches/mix/installs/elixir-1.14.2-erts-13.1.2/a826da6aae061e7c6387a01df4160cd5/_build/dev/lib/ex_faiss/priv/libex_faiss.so, 0x0002): symbol not found in flat namespace \'___kmpc_barrier\'\''}}
 
-If you want to create a new branch to retain commits you create, you may
-do so (now or later) by using -c with the switch command. Example:
+Generated ex_faiss app
+==> xla
+Compiling 2 files (.ex)
+Generated xla app
+==> exla
+Unpacking /Users/rakshan/Library/Caches/xla/0.4.4/cache/download/xla_extension-aarch64-darwin-cpu.tar.gz into /Users/rakshan/Library/Caches/mix/installs/elixir-1.14.2-erts-13.1.2/a826da6aae061e7c6387a01df4160cd5/deps/exla/cache
+Using libexla.so from /Users/rakshan/Library/Caches/xla/exla/elixir-1.14.2-erts-13.1.2-xla-0.4.4-exla-0.5.1-4xbrruthhybd5baxjryp52phgi/libexla.so
+Compiling 21 files (.ex)
+Generated exla app
+```
 
-  git switch -c <new-branch-name>
+<!-- livebook:{"output":true} -->
 
-Or undo this operation with:
+```
+:ok
+```
 
-  git switch -
+<!-- livebook:{"output":true} -->
 
-Turn off this advice by setting config variable advice.detachedHead to false
+```
 
-HEAD is now at 19f7696 Updated changelog with implemented features for 1.7.3 release (#2564)
--- The CXX compiler identification is Clang 11.1.0
--- Detecting CXX compiler ABI info
--- Detecting CXX compiler ABI info - done
--- Check for working CXX compiler: /nix/store/c52qgyvj637p95wq14hm06pjdiw69fcs-clang-wrapper-11.1.0/bin/clang++ - skipped
--- Detecting CXX compile features
--- Detecting CXX compile features - done
-CMake Error at /nix/store/lm51dv6mg2xl2fpcywld7cmjwkzqkhiz-cmake-3.24.3/share/cmake-3.24/Modules/FindPackageHandleStandardArgs.cmake:230 (message):
-  Could NOT find OpenMP_CXX (missing: OpenMP_CXX_FLAGS OpenMP_CXX_LIB_NAMES)
-Call Stack (most recent call first):
-  /nix/store/lm51dv6mg2xl2fpcywld7cmjwkzqkhiz-cmake-3.24.3/share/cmake-3.24/Modules/FindPackageHandleStandardArgs.cmake:594 (_FPHSA_FAILURE_MESSAGE)
-  /nix/store/lm51dv6mg2xl2fpcywld7cmjwkzqkhiz-cmake-3.24.3/share/cmake-3.24/Modules/FindOpenMP.cmake:545 (find_package_handle_standard_args)
-  faiss/CMakeLists.txt:242 (find_package)
+12:39:26.207 [warn] The on_load function for module Elixir.ExFaiss.NIF returned:
+{:error,
+ {:load_failed,
+  'Failed to load NIF library: \'dlopen(/Users/rakshan/Library/Caches/mix/installs/elixir-1.14.2-erts-13.1.2/a826da6aae061e7c6387a01df4160cd5/_build/dev/lib/ex_faiss/priv/libex_faiss.so, 0x0002): symbol not found in flat namespace \'___kmpc_barrier\'\''}}
 
 
--- Configuring incomplete, errors occurred!
-See also "/Users/rakshan/.cache/ex_faiss/faiss-19f7696deedc93615c3ee0ff4de22284b53e0243/build/CMakeFiles/CMakeOutput.log".
-See also "/Users/rakshan/.cache/ex_faiss/faiss-19f7696deedc93615c3ee0ff4de22284b53e0243/build/CMakeFiles/CMakeError.log".
-make: *** [Makefile:68: /Users/rakshan/.cache/ex_faiss/faiss-19f7696deedc93615c3ee0ff4de22284b53e0243/build/faiss] Error 1
-could not compile dependency :ex_faiss, "mix compile" failed. Errors may have been logged above. You can recompile this dependency with "mix deps.compile ex_faiss", update it with "mix deps.update ex_faiss" or clean it with "mix deps.clean ex_faiss"
 ```
 
 ## Creating an Index
 
 ```elixir
-index = ExFaiss.Index.
+index = ExFaiss.Index
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+ExFaiss.Index
 ```

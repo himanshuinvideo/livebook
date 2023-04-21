@@ -1,0 +1,76 @@
+# Bringing Elixir to life
+
+```elixir
+Mix.install([
+  {:kino, "~> 0.9.0"},
+  {:evision, "~> 0.1.21"},
+  {:req, "~> 0.3"}
+])
+```
+
+## Processes
+
+You might have heard that we can create millions of processes:
+
+```elixir
+for _ <- 1..1_000_000 do
+  spawn(fn -> :ok end)
+end
+```
+
+Process communicate by sending messages between them:
+
+```elixir
+child =
+  spawn(fn ->
+    receive do
+      {:ping, caller} -> send(caller, :pong)
+    end
+  end)
+
+send(child, {:ping, self()})
+
+receive do
+  :pong -> :it_worked!
+end
+```
+
+And Livebook can helps us see how processes communicate between them:
+
+```elixir
+Kino.Process.render_seq_trace(fn ->
+  child =
+    spawn(fn ->
+      receive do
+        {:ping, caller} -> send(caller, :pong)
+      end
+    end)
+
+  send(child, {:ping, self()})
+
+  receive do
+    :pong -> :it_worked!
+  end
+end)
+```
+
+Maybe you want to see how Elixir can perform multiple tasks at once, scaling on both CPU and IO?
+
+```elixir
+Kino.Process.render_seq_trace(fn ->
+  1..4
+  |> Task.async_stream(
+    fn _ -> Process.sleep(Enum.random(100..300)) end,
+    max_concurrency: 4
+  )
+  |> Stream.run()
+end)
+```
+
+```elixir
+frame = Kino.Frame.new() |> Kino.render()
+
+for _ <- Stream.interval(1000) do
+  Kino.Frame.render(frame, :erlang.memory())
+end
+```

@@ -2,10 +2,14 @@
 
 export LIVEBOOK_HOME=$(pwd)/books
 export LIVEBOOK_DATA_PATH=$(pwd)/.livebook
+export LIVEBOOK_TOKEN_ENABLED=false
 
 if [[ $(uname) == "Darwin" ]] && [[ $(uname -m) == 'arm64' ]]
 then
   export EXLA_FLAGS=--config=macos_arm64
 fi
 
-livebook server --no-token
+#export LIVEBOOK_DISTRIBUTION=name
+#export ERL_AFLAGS="-proto_dist inet6_tcp"
+
+livebook server

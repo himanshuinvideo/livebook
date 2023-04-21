@@ -1,0 +1,313 @@
+# Clip
+
+```elixir
+Mix.install(
+  [
+    {:bumblebee, "~> 0.3.0"},
+    {:nx, "~> 0.5.3"},
+    {:exla, "~> 0.5.3"},
+    {:kino, "~> 0.9.0"},
+    {:kino_bumblebee, "~> 0.3.0"},
+    {:annoy_ex, git: "https://github.com/invideoio/annoy_ex.git", branch: "v1.0.1"},
+    {:stb_image, "~> 0.6.1"},
+    {:req, "~> 0.3.5"}
+  ],
+  config: [nx: [default_backend: EXLA.Backend]]
+)
+
+Nx.global_default_backend(EXLA.Backend)
+```
+
+## Section
+
+```elixir
+{:ok, tokenizer} = Bumblebee.load_tokenizer({:hf, "openai/clip-vit-base-patch32"})
+{:ok, featurizer} = Bumblebee.load_featurizer({:hf, "openai/clip-vit-base-patch32"})
+
+{:ok, clip_text} =
+  Bumblebee.load_model(
+    {:hf, "openai/clip-vit-base-patch32"},
+    module: Bumblebee.Text.ClipText,
+    architecture: :base
+  )
+
+{:ok, clip} = Bumblebee.load_model({:hf, "openai/clip-vit-base-patch32"})
+```
+
+```elixir
+defmodule Utils do
+  import Nx.Defn
+
+  def normalize(tensor) do
+    Axon.layer(&norm/2, [tensor], op_names: :normalize)
+  end
+
+  defnp norm(tensor, _opts \\ []) do
+    magnitude =
+      tensor
+      |> Nx.power(2)
+      |> Nx.sum(axes: [-1], keep_axes: true)
+      |> Nx.sqrt()
+
+    tensor / magnitude
+  end
+
+  def normalize_channels(input, channels) do
+    channel_axis = Nx.axis_index(input, -1)
+
+    case {Nx.axis_size(input, channel_axis), channels} do
+      {channels, channels} ->
+        input
+
+      {4, 3} ->
+        Nx.slice_along_axis(input, 0, 3, axis: channel_axis)
+
+      {1, 3} ->
+        shape = input |> Nx.shape() |> put_elem(channel_axis, 3)
+        Nx.broadcast(input, shape)
+
+      {actual, expected} ->
+        raise ArgumentError,
+              "expected image with #{expected} channels, but got #{actual} and no automatic conversion applies"
+    end
+  end
+end
+```
+
+```elixir
+defmodule ClipText do
+  def serving do
+    batch_size = 10
+    sequence_length = 42
+    defn_options = [compiler: EXLA]
+
+    # load the model and tokenizer
+    {:ok, clip} = Bumblebee.load_model({:hf, "openai/clip-vit-base-patch32"})
+
+    text_embeddings_model =
+      Bumblebee.Text.ClipText.model(clip.spec.text_spec)
+      |> Axon.nx(& &1.pooled_state)
+      |> Axon.dense(512, use_bias: false, name: "text_projection")
+      |> Utils.normalize()
+
+    {:ok, tokenizer} = Bumblebee.load_tokenizer({:hf, "openai/clip-vit-base-patch32"})
+
+    # Build the prediction defn function
+    {_init_fun, predict_fun} = Axon.build(text_embeddings_model)
+
+    Nx.Serving.new(
+      fn ->
+        IO.puts(">>> serving init")
+
+        inputs_template = %{"input_ids" => Nx.template({batch_size, sequence_length}, :s64)}
+        template_args = [Nx.to_template(clip.params), inputs_template]
+
+        # Compile the prediction function upfront for the configured batch_size
+        predict_fun = Nx.Defn.compile(predict_fun, template_args, defn_options)
+
+        # The returned function is called for every accumulated batch
+        fn inputs ->
+          IO.puts(">>> batch #{inspect(inputs)}")
+          inputs = Nx.Batch.pad(inputs, batch_size - inputs.size)
+          predict_fun.(clip.params, inputs)
+        end
+      end,
+      batch_size: batch_size,
+      batch_timeout: 20
+    )
+    |> Nx.Serving.client_preprocessing(fn inputs ->
+      inputs =
+        Bumblebee.apply_tokenizer(
+          tokenizer,
+          inputs,
+          # max
+          length: sequence_length,
+          return_token_type_ids: false,
+          return_attention_mask: false
+        )
+
+      {Nx.Batch.concatenate([inputs]), %{}}
+    end)
+  end
+end
+```
+
+```elixir
+sup_id = Process.whereis(:clip_text_sup)
+
+if sup_id do
+  Supervisor.stop(sup_id)
+end
+
+children = [
+  {Nx.Serving,
+   serving: ClipText.serving(), name: ClipText.Serving, batch_size: 10, batch_timeout: 20}
+]
+
+Supervisor.start_link(children, strategy: :one_for_one, name: :clip_text_sup)
+```
+
+```elixir
+Kino.Process.sup_tree(:clip_text_sup)
+```
+
+```elixir
+text_input =
+  Kino.Input.textarea("Text",
+    default: "a dog and a cat"
+  )
+
+form = Kino.Control.form([text: text_input], submit: "Run")
+frame = Kino.Frame.new()
+
+form
+|> Kino.Control.stream()
+|> Kino.listen(fn %{data: %{text: text}} ->
+  Kino.Frame.render(frame, Kino.Markdown.new("Running..."))
+
+  {t, output} =
+    :timer.tc(fn ->
+      0..50
+      |> Enum.map(fn _ ->
+        Task.async(fn ->
+          Nx.Serving.batched_run(
+            ClipText.Serving,
+            [text]
+            # List.duplicate(text, 8)
+          )
+        end)
+      end)
+      |> Task.await_many(1000 * 20)
+    end)
+
+  Kino.Frame.render(frame, ["took #{t / 1.0e6}s", output])
+end)
+
+Kino.Layout.grid([form, frame], boxed: true, gap: 16)
+```
+
+## Image with serving
+
+```elixir
+defmodule ClipVision do
+  def serving do
+    batch_size = 10
+    defn_options = [compiler: EXLA]
+
+    # load the model and featurizer
+    {:ok, clip} = Bumblebee.load_model({:hf, "openai/clip-vit-base-patch32"})
+
+    model =
+      Bumblebee.Vision.ClipVision.model(clip.spec.vision_spec)
+      |> Axon.nx(& &1.pooled_state)
+      |> Axon.dense(512, use_bias: false, name: "visual_projection")
+      |> Utils.normalize()
+
+    {:ok, featurizer} = Bumblebee.load_featurizer({:hf, "openai/clip-vit-base-patch32"})
+
+    # Build the prediction defn function
+    {_init_fun, predict_fun} = Axon.build(model)
+
+    Nx.Serving.new(
+      fn ->
+        IO.puts(">>> serving init")
+
+        inputs_template = %{"pixel_values" => Nx.template({batch_size, 224, 224, 3}, :f32)}
+        template_args = [Nx.to_template(clip.params), inputs_template]
+
+        # Compile the prediction function upfront for the configured batch_size
+        predict_fun = Nx.Defn.compile(predict_fun, template_args, defn_options)
+
+        # The returned function is called for every accumulated batch
+        fn inputs ->
+          inputs = Nx.Batch.pad(inputs, batch_size - inputs.size)
+          predict_fun.(clip.params, inputs)
+        end
+      end,
+      batch_size: batch_size
+    )
+    |> Nx.Serving.client_preprocessing(fn inputs ->
+      IO.puts(">>> serving preprocessing")
+
+      inputs =
+        Bumblebee.apply_featurizer(
+          featurizer,
+          inputs
+        )
+
+      {Nx.Batch.concatenate([inputs]), %{}}
+    end)
+  end
+end
+```
+
+```elixir
+sup_id = Process.whereis(:clip_vision_sup)
+
+if sup_id do
+  Supervisor.stop(sup_id)
+end
+
+children = [
+  {Nx.Serving,
+   serving: ClipVision.serving(), name: ClipVision.Serving, batch_size: 10, batch_timeout: 20}
+]
+
+Supervisor.start_link(children, strategy: :one_for_one, name: :clip_vision_sup)
+```
+
+```elixir
+Kino.Process.sup_tree(:clip_vision_sup)
+```
+
+```elixir
+image_input = Kino.Input.image("Text")
+
+form = Kino.Control.form([image: image_input], submit: "Run")
+frame = Kino.Frame.new()
+
+form
+|> Kino.Control.stream()
+|> Kino.listen(fn %{data: %{image: image}} ->
+  Kino.Frame.render(frame, Kino.Markdown.new("Running..."))
+
+  {t, output} =
+    :timer.tc(fn ->
+      image =
+        image.data
+        |> Nx.from_binary(:u8)
+        |> Nx.reshape({image.height, image.width, 3})
+
+      0..40
+      |> Enum.map(fn _ ->
+        Task.async(fn ->
+          Nx.Serving.batched_run(
+            ClipVision.Serving,
+            [image]
+            # List.duplicate(image, 1)
+          )
+        end)
+      end)
+      |> Task.await_many(1000 * 20)
+    end)
+
+  Kino.Frame.render(frame, ["took #{t / 1.0e6}s", output])
+end)
+
+Kino.Layout.grid([form, frame], boxed: true, gap: 16)
+```
+
+```elixir
+# model = Bumblebee.Vision.ClipVision.model(clip.spec.vision_spec)
+# |> Axon.nx(& &1.pooled_state)
+# |> Axon.dense(512, use_bias: false, name: "visual_projection")
+# |> Utils.normalize()
+
+img = StbImage.read_file!("/Users/rakshan/Downloads/Logo_Ville_d'Orange.png")
+
+# input = StbImage.to_nx(img)
+
+# img = Utils.normalize_channels(input, 3)
+
+Bumblebee.apply_featurizer(featurizer, [img])
+```

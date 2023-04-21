@@ -18,65 +18,6 @@ Mix.install(
 <!-- livebook:{"output":true} -->
 
 ```
-Resolving Hex dependencies...
-Dependency resolution completed:
-New:
-  axon 0.5.1
-  complex 0.5.0
-  elixir_make 0.7.6
-  exla 0.5.1
-  kino 0.9.0
-  nx 0.5.1
-  table 0.1.2
-  table_rex 3.1.1
-  telemetry 1.2.1
-  xla 0.4.4
-* Getting axon (Hex package)
-* Getting nx (Hex package)
-* Getting exla (Hex package)
-* Getting table_rex (Hex package)
-* Getting kino (Hex package)
-* Getting table (Hex package)
-* Getting elixir_make (Hex package)
-* Getting telemetry (Hex package)
-* Getting xla (Hex package)
-* Getting complex (Hex package)
-==> table
-Compiling 5 files (.ex)
-Generated table app
-===> Analyzing applications...
-===> Compiling telemetry
-==> complex
-Compiling 2 files (.ex)
-Generated complex app
-==> nx
-Compiling 31 files (.ex)
-Generated nx app
-==> kino
-Compiling 39 files (.ex)
-Generated kino app
-==> table_rex
-Compiling 7 files (.ex)
-Generated table_rex app
-==> axon
-Compiling 23 files (.ex)
-Generated axon app
-==> elixir_make
-Compiling 6 files (.ex)
-Generated elixir_make app
-==> xla
-Compiling 2 files (.ex)
-Generated xla app
-==> exla
-Unpacking /Users/rakshan/Library/Caches/xla/0.4.4/cache/download/xla_extension-aarch64-darwin-cpu.tar.gz into /Users/rakshan/Library/Caches/mix/installs/elixir-1.14.2-erts-13.0.4/0080508832d2eb8ea6a44452e1f40917/deps/exla/cache
-Using libexla.so from /Users/rakshan/Library/Caches/xla/exla/elixir-1.14.2-erts-13.0.4-xla-0.4.4-exla-0.5.1-4xbrruthhybd5baxjryp52phgi/libexla.so
-Compiling 21 files (.ex)
-Generated exla app
-```
-
-<!-- livebook:{"output":true} -->
-
-```
 :ok
 ```
 
@@ -127,263 +68,255 @@ train = for n <- 1..1000, do: Nx.tensor(mods.(n))
 <!-- livebook:{"output":true} -->
 
 ```
-
-15:10:59.494 [info] TfrtCpuClient created.
-
-```
-
-<!-- livebook:{"output":true} -->
-
-```
 [
   #Nx.Tensor<
     s64[3]
-    EXLA.Backend<host:0, 0.1623007113.3978690587.10051>
+    EXLA.Backend<host:0, 0.1623007113.3978690587.42603>
     [1, 1, 1]
   >,
   #Nx.Tensor<
     s64[3]
-    EXLA.Backend<host:0, 0.1623007113.3978690589.7937>
+    EXLA.Backend<host:0, 0.1623007113.3978690587.42604>
     [2, 2, 2]
   >,
   #Nx.Tensor<
     s64[3]
-    EXLA.Backend<host:0, 0.1623007113.3978690587.10052>
+    EXLA.Backend<host:0, 0.1623007113.3978690587.42605>
     [0, 3, 3]
   >,
   #Nx.Tensor<
     s64[3]
-    EXLA.Backend<host:0, 0.1623007113.3978690589.7938>
+    EXLA.Backend<host:0, 0.1623007113.3978690587.42606>
     [1, 4, 4]
   >,
   #Nx.Tensor<
     s64[3]
-    EXLA.Backend<host:0, 0.1623007113.3978690587.10053>
+    EXLA.Backend<host:0, 0.1623007113.3978690587.42607>
     [2, 0, 5]
   >,
   #Nx.Tensor<
     s64[3]
-    EXLA.Backend<host:0, 0.1623007113.3978690587.10054>
+    EXLA.Backend<host:0, 0.1623007113.3978690587.42608>
     [0, 1, 6]
   >,
   #Nx.Tensor<
     s64[3]
-    EXLA.Backend<host:0, 0.1623007113.3978690587.10055>
+    EXLA.Backend<host:0, 0.1623007113.3978690587.42609>
     [1, 2, 7]
   >,
   #Nx.Tensor<
     s64[3]
-    EXLA.Backend<host:0, 0.1623007113.3978690587.10056>
+    EXLA.Backend<host:0, 0.1623007113.3978690587.42610>
     [2, 3, 8]
   >,
   #Nx.Tensor<
     s64[3]
-    EXLA.Backend<host:0, 0.1623007113.3978690589.7939>
+    EXLA.Backend<host:0, 0.1623007113.3978690587.42611>
     [0, 4, 9]
   >,
   #Nx.Tensor<
     s64[3]
-    EXLA.Backend<host:0, 0.1623007113.3978690589.7940>
+    EXLA.Backend<host:0, 0.1623007113.3978690587.42612>
     [1, 0, 10]
   >,
   #Nx.Tensor<
     s64[3]
-    EXLA.Backend<host:0, 0.1623007113.3978690587.10057>
+    EXLA.Backend<host:0, 0.1623007113.3978690587.42613>
     [2, 1, 11]
   >,
   #Nx.Tensor<
     s64[3]
-    EXLA.Backend<host:0, 0.1623007113.3978690587.10058>
+    EXLA.Backend<host:0, 0.1623007113.3978690587.42614>
     [0, 2, 12]
   >,
   #Nx.Tensor<
     s64[3]
-    EXLA.Backend<host:0, 0.1623007113.3978690587.10059>
+    EXLA.Backend<host:0, 0.1623007113.3978690587.42615>
     [1, 3, 13]
   >,
   #Nx.Tensor<
     s64[3]
-    EXLA.Backend<host:0, 0.1623007113.3978690587.10060>
+    EXLA.Backend<host:0, 0.1623007113.3978690587.42616>
     [2, 4, 14]
   >,
   #Nx.Tensor<
     s64[3]
-    EXLA.Backend<host:0, 0.1623007113.3978690589.7941>
+    EXLA.Backend<host:0, 0.1623007113.3978690587.42617>
     [0, 0, 0]
   >,
   #Nx.Tensor<
     s64[3]
-    EXLA.Backend<host:0, 0.1623007113.3978690587.10061>
+    EXLA.Backend<host:0, 0.1623007113.3978690587.42618>
     [1, 1, 1]
   >,
   #Nx.Tensor<
     s64[3]
-    EXLA.Backend<host:0, 0.1623007113.3978690589.7942>
+    EXLA.Backend<host:0, 0.1623007113.3978690587.42619>
     [2, 2, 2]
   >,
   #Nx.Tensor<
     s64[3]
-    EXLA.Backend<host:0, 0.1623007113.3978690587.10062>
+    EXLA.Backend<host:0, 0.1623007113.3978690587.42620>
     [0, 3, 3]
   >,
   #Nx.Tensor<
     s64[3]
-    EXLA.Backend<host:0, 0.1623007113.3978690587.10063>
+    EXLA.Backend<host:0, 0.1623007113.3978690587.42621>
     [1, 4, 4]
   >,
   #Nx.Tensor<
     s64[3]
-    EXLA.Backend<host:0, 0.1623007113.3978690587.10064>
+    EXLA.Backend<host:0, 0.1623007113.3978690587.42622>
     [2, 0, 5]
   >,
   #Nx.Tensor<
     s64[3]
-    EXLA.Backend<host:0, 0.1623007113.3978690587.10065>
+    EXLA.Backend<host:0, 0.1623007113.3978690587.42623>
     [0, 1, 6]
   >,
   #Nx.Tensor<
     s64[3]
-    EXLA.Backend<host:0, 0.1623007113.3978690587.10066>
+    EXLA.Backend<host:0, 0.1623007113.3978690587.42624>
     [1, 2, 7]
   >,
   #Nx.Tensor<
     s64[3]
-    EXLA.Backend<host:0, 0.1623007113.3978690587.10067>
+    EXLA.Backend<host:0, 0.1623007113.3978690587.42625>
     [2, 3, 8]
   >,
   #Nx.Tensor<
     s64[3]
-    EXLA.Backend<host:0, 0.1623007113.3978690587.10068>
+    EXLA.Backend<host:0, 0.1623007113.3978690587.42626>
     [0, 4, 9]
   >,
   #Nx.Tensor<
     s64[3]
-    EXLA.Backend<host:0, 0.1623007113.3978690587.10069>
+    EXLA.Backend<host:0, 0.1623007113.3978690587.42627>
     [1, 0, 10]
   >,
   #Nx.Tensor<
     s64[3]
-    EXLA.Backend<host:0, 0.1623007113.3978690587.10070>
+    EXLA.Backend<host:0, 0.1623007113.3978690587.42628>
     [2, 1, 11]
   >,
   #Nx.Tensor<
     s64[3]
-    EXLA.Backend<host:0, 0.1623007113.3978690587.10071>
+    EXLA.Backend<host:0, 0.1623007113.3978690587.42629>
     [0, 2, 12]
   >,
   #Nx.Tensor<
     s64[3]
-    EXLA.Backend<host:0, 0.1623007113.3978690587.10072>
+    EXLA.Backend<host:0, 0.1623007113.3978690587.42630>
     [1, 3, 13]
   >,
   #Nx.Tensor<
     s64[3]
-    EXLA.Backend<host:0, 0.1623007113.3978690587.10073>
+    EXLA.Backend<host:0, 0.1623007113.3978690587.42631>
     [2, 4, 14]
   >,
   #Nx.Tensor<
     s64[3]
-    EXLA.Backend<host:0, 0.1623007113.3978690587.10074>
+    EXLA.Backend<host:0, 0.1623007113.3978690587.42632>
     [0, 0, 0]
   >,
   #Nx.Tensor<
     s64[3]
-    EXLA.Backend<host:0, 0.1623007113.3978690587.10075>
+    EXLA.Backend<host:0, 0.1623007113.3978690587.42633>
     [1, 1, 1]
   >,
   #Nx.Tensor<
     s64[3]
-    EXLA.Backend<host:0, 0.1623007113.3978690587.10076>
+    EXLA.Backend<host:0, 0.1623007113.3978690587.42634>
     [2, 2, 2]
   >,
   #Nx.Tensor<
     s64[3]
-    EXLA.Backend<host:0, 0.1623007113.3978690587.10077>
+    EXLA.Backend<host:0, 0.1623007113.3978690587.42635>
     [0, 3, 3]
   >,
   #Nx.Tensor<
     s64[3]
-    EXLA.Backend<host:0, 0.1623007113.3978690587.10078>
+    EXLA.Backend<host:0, 0.1623007113.3978690587.42636>
     [1, 4, 4]
   >,
   #Nx.Tensor<
     s64[3]
-    EXLA.Backend<host:0, 0.1623007113.3978690587.10079>
+    EXLA.Backend<host:0, 0.1623007113.3978690587.42637>
     [2, 0, 5]
   >,
   #Nx.Tensor<
     s64[3]
-    EXLA.Backend<host:0, 0.1623007113.3978690587.10080>
+    EXLA.Backend<host:0, 0.1623007113.3978690587.42638>
     [0, 1, 6]
   >,
   #Nx.Tensor<
     s64[3]
-    EXLA.Backend<host:0, 0.1623007113.3978690587.10081>
+    EXLA.Backend<host:0, 0.1623007113.3978690587.42639>
     [1, 2, 7]
   >,
   #Nx.Tensor<
     s64[3]
-    EXLA.Backend<host:0, 0.1623007113.3978690587.10082>
+    EXLA.Backend<host:0, 0.1623007113.3978690587.42640>
     [2, 3, 8]
   >,
   #Nx.Tensor<
     s64[3]
-    EXLA.Backend<host:0, 0.1623007113.3978690587.10083>
+    EXLA.Backend<host:0, 0.1623007113.3978690587.42641>
     [0, 4, 9]
   >,
   #Nx.Tensor<
     s64[3]
-    EXLA.Backend<host:0, 0.1623007113.3978690587.10084>
+    EXLA.Backend<host:0, 0.1623007113.3978690587.42642>
     [1, 0, 10]
   >,
   #Nx.Tensor<
     s64[3]
-    EXLA.Backend<host:0, 0.1623007113.3978690587.10085>
+    EXLA.Backend<host:0, 0.1623007113.3978690587.42643>
     [2, 1, 11]
   >,
   #Nx.Tensor<
     s64[3]
-    EXLA.Backend<host:0, 0.1623007113.3978690587.10086>
+    EXLA.Backend<host:0, 0.1623007113.3978690587.42644>
     [0, 2, 12]
   >,
   #Nx.Tensor<
     s64[3]
-    EXLA.Backend<host:0, 0.1623007113.3978690587.10087>
+    EXLA.Backend<host:0, 0.1623007113.3978690587.42645>
     [1, 3, 13]
   >,
   #Nx.Tensor<
     s64[3]
-    EXLA.Backend<host:0, 0.1623007113.3978690587.10088>
+    EXLA.Backend<host:0, 0.1623007113.3978690587.42646>
     [2, 4, 14]
   >,
   #Nx.Tensor<
     s64[3]
-    EXLA.Backend<host:0, 0.1623007113.3978690587.10089>
+    EXLA.Backend<host:0, 0.1623007113.3978690587.42647>
     [0, 0, 0]
   >,
   #Nx.Tensor<
     s64[3]
-    EXLA.Backend<host:0, 0.1623007113.3978690587.10090>
+    EXLA.Backend<host:0, 0.1623007113.3978690587.42648>
     [1, 1, 1]
   >,
   #Nx.Tensor<
     s64[3]
-    EXLA.Backend<host:0, 0.1623007113.3978690587.10091>
+    EXLA.Backend<host:0, 0.1623007113.3978690587.42649>
     [2, 2, 2]
   >,
   #Nx.Tensor<
     s64[3]
-    EXLA.Backend<host:0, 0.1623007113.3978690587.10092>
+    EXLA.Backend<host:0, 0.1623007113.3978690587.42650>
     [0, 3, ...]
   >,
   #Nx.Tensor<
     s64[3]
-    EXLA.Backend<host:0, 0.1623007113.3978690587.10093>
+    EXLA.Backend<host:0, 0.1623007113.3978690587.42651>
     [1, ...]
   >,
   #Nx.Tensor<
     s64[3]
-    EXLA.Backend<host:0, 0.1623007113.3978690587.10094>
+    EXLA.Backend<host:0, 0.1623007113.3978690587.42652>
     [...]
   >,
   ...
@@ -399,7 +332,7 @@ test = for(n <- 1..15, do: mods.(n)) |> Nx.tensor()
 ```
 #Nx.Tensor<
   s64[15][3]
-  EXLA.Backend<host:0, 0.1623007113.3978690587.11046>
+  EXLA.Backend<host:0, 0.1623007113.3978690587.43603>
   [
     [1, 1, 1],
     [2, 2, 2],
@@ -842,16 +775,7 @@ Axon.Display.as_graph(model, Nx.template({1, 3}, :s64))
 <!-- livebook:{"output":true} -->
 
 ```mermaid
-graph TD;
-13[/"fizzbuzz (:input) {1, 3}"/];
-14["dense_0 (:dense) {1, 10}"];
-15["relu_0 (:relu) {1, 10}"];
-16["dense_1 (:dense) {1, 4}"];
-17["softmax_0 (:softmax) {1, 4}"];
-16 --> 17;
-15 --> 16;
-14 --> 15;
-13 --> 14;
+null
 ```
 
 ```elixir
