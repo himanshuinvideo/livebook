@@ -1,0 +1,54 @@
+# Clip Text Serving
+
+```elixir
+Mix.install(
+  [
+    {:bumblebee, github: "elixir-nx/bumblebee"},
+    {:exla, "~> 0.5.3"},
+    {:livebook_utils, path: "./lib/livebook_utils"}
+  ],
+  force: false,
+  config: [
+    logger: [truncate: :infinity],
+    nx: [default_backend: EXLA.Backend]
+  ]
+)
+```
+
+## Setup
+
+```elixir
+clip_model_name = "openai/clip-vit-base-patch32"
+```
+
+```elixir
+{:ok, model_info} =
+  Bumblebee.load_model({:hf, clip_model_name},
+    module: Bumblebee.Text.ClipText,
+    architecture: :base
+  )
+```
+
+```elixir
+{:ok, tokenizer} = Bumblebee.load_tokenizer({:hf, clip_model_name})
+```
+
+```elixir
+options = [
+  embedding_processor: :l2_norm,
+  compile: [batch_size: 10, sequence_length: 42],
+  defn_options: [compiler: EXLA]
+]
+
+serving = Bumblebee.Text.TextEmbedding.text_embedding(model_info, tokenizer, options)
+```
+
+## Usage
+
+```elixir
+text = "a photo of a cat"
+```
+
+```elixir
+text = Nx.Serving.run(serving, text) |> Map.get(:embedding)
+```

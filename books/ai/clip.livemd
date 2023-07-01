@@ -82,10 +82,14 @@ defmodule ClipText do
     defn_options = [compiler: EXLA]
 
     # load the model and tokenizer
-    {:ok, clip} = Bumblebee.load_model({:hf, "openai/clip-vit-base-patch32"})
+    {:ok, clip} =
+      Bumblebee.load_model(
+        {:hf, "openai/clip-vit-base-patch32"},
+        module: Bumblebee.Text.ClipText
+      )
 
     text_embeddings_model =
-      Bumblebee.Text.ClipText.model(clip.spec.text_spec)
+      clip
       |> Axon.nx(& &1.pooled_state)
       |> Axon.dense(512, use_bias: false, name: "text_projection")
       |> Utils.normalize()

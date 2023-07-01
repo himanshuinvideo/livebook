@@ -140,7 +140,11 @@ end
 ## Usage
 
 ```elixir
-{:ok, result} = OpenAi.text_embedding(["Animal", "Cat", "Dog"])
+{:ok, result} =
+  OpenAi.text_embedding([
+    "an aerial view of the campus of harvard university in cambridge, massachusetts, united states",
+    "aerial view of harvard university"
+  ])
 ```
 
 ```elixir
@@ -191,8 +195,4 @@ Vl.new(width: 800, height: 800)
 |> Vl.encode_field(:y, "y", type: :quantitative)
 ```
 
-```elixir
-
-```
-
-<!-- livebook:{"offset":4597,"stamp":{"token":"QTEyOEdDTQ.MIPLSexVUgVFmRcA8wQ84bwUqlr5wr9Isg8vBx5va3kGhuKnT_T3bAmClXc.hJOv-QH8hU_0QgFM.NNPU9hXc42vothjpkukt4_h1NPpX_is020Kk855gJxga9jIhe18iLx_FF6zFR3SNE4BE.gkSpNfINrLAwCltO4ZaAwA","version":1}} -->
+<!-- livebook:{"offset":4705,"stamp":{"token":"QTEyOEdDTQ.m0HlEpasP9RGtKhVxgKCpCsEo8yC-DW3Izw2ELVSGtlcXN0NP7MbrmOoTu8.Cv4vG3oL4CtX7Qw9.G038dLAutHaoYD6mRFS989mJGBz_TGvKXmIRAx1ya4OS7SjlQ-tv0aU7pMC0oi2V6CvQ.GJs1031ZzkDRdvKaiEDfDA","version":1}} -->
