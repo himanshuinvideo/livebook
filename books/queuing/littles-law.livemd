@@ -1,0 +1,54 @@
+# Little's Law
+
+## Little's Law
+
+> In queueing theory, the long-term average number L of customers in a stationary system is equal to the long-term average effective arrival rate λ multiplied by the average time W that a customer spends in the system.
+
+L = λW
+
+* L = Items in the queue
+* λ = Average arrival rate (throughput)
+* W = Average processing time
+
+WIP = Throughput * Response time
+
+Response Time = WIP / Throughput
+
+Throughput = WIP / Response Time
+
+```elixir
+defmodule LittleLaw do
+  defstruct unit: nil,
+            throughput: nil,
+            wip: nil,
+            response_time: nil
+
+  def wip(ll) do
+    value = ll.throughput * ll.response_time
+    value / ll.unit
+  end
+
+  def response_time(ll) do
+    value = ll.wip / ll.throughput
+    value * ll.unit
+  end
+
+  def throughput(ll) do
+    value = ll.wip / ll.response_time
+    value / ll.unit
+  end
+end
+```
+
+```elixir
+ll = %LittleLaw{
+  unit: :timer.seconds(1),
+  response_time: :timer.seconds(0.2),
+  throughput: 10,
+  wip: 2
+}
+
+LittleLaw.wip(ll) |> IO.inspect()
+# LittleLaw.response_time(ll) |> IO.inspect()
+# LittleLaw.throughput(ll) |> IO.inspect()
+```

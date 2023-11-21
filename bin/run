@@ -3,6 +3,7 @@
 export LIVEBOOK_HOME=$(pwd)/books
 export LIVEBOOK_DATA_PATH=$(pwd)/.livebook
 export LIVEBOOK_TOKEN_ENABLED=false
+export LIVEBOOK_IFRAME_PORT=9053
 
 if [[ $(uname) == "Darwin" ]] && [[ $(uname -m) == 'arm64' ]]
 then
@@ -12,4 +13,4 @@ fi
 #export LIVEBOOK_DISTRIBUTION=name
 #export ERL_AFLAGS="-proto_dist inet6_tcp"
 
-livebook server
+livebook server -p 9052

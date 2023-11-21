@@ -1,0 +1,34 @@
+# Untitled notebook
+
+```elixir
+Mix.install([
+  {:nimble_parsec, "~> 1.3"}
+])
+```
+
+## Section
+
+```elixir
+defmodule PhoneNumber.Parser do
+  import NimbleParsec
+
+  trunk_prefix = string("0")
+
+  country_code = string("+91")
+
+  digit = utf8_string([?0..?9], 10)
+
+  code = choice([country_code, trunk_prefix])
+
+  number = digit |> times(1)
+
+  indian_phone_number = code |> concat(number) |> eos()
+
+  defparsec(:parse, indian_phone_number)
+end
+```
+
+```elixir
+PhoneNumber.Parser.parse("+919870827360") |> IO.inspect()
+PhoneNumber.Parser.parse("09870827360") |> IO.inspect()
+```

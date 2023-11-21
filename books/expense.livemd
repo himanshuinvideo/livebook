@@ -1,0 +1,198 @@
+# Expense
+
+```elixir
+Mix.install([
+  {:csv, "~> 3.0"},
+  {:timex, "~> 3.7"},
+  {:kino, "~> 0.10.0"}
+])
+```
+
+## Section
+
+<!-- livebook:{"reevaluate_automatically":true} -->
+
+```elixir
+
+```
+
+<!-- livebook:{"reevaluate_automatically":true} -->
+
+```elixir
+defmodule Transactions do
+  def parse(transaction) do
+    case transaction["DR/CR"] do
+      "DR" -> parse_spend(transaction)
+      "CR" -> parse_income(transaction)
+    end
+  end
+
+  defp parse_income(transaction) do
+    %Income{
+      account: transaction["ACCOUNT"],
+      amount: parse_amount(transaction["AMOUNT"]),
+      category: parse_catgory(transaction["CATEGORY"]),
+      date: parse_date(transaction["DATE"]),
+      income: transaction["INCOME"] == "Yes",
+      note: parse_string(transaction["NOTE"]),
+      place: transaction["PLACE"],
+      tags: parse_tags(transaction["TAGS"]),
+      receipt: transaction["RECEIPT"]
+    }
+  end
+
+  defp parse_spend(transaction) do
+    %Spend{
+      account: transaction["ACCOUNT"],
+      amount: parse_amount(transaction["AMOUNT"]),
+      category: parse_catgory(transaction["CATEGORY"]),
+      date: parse_date(transaction["DATE"]),
+      expense: transaction["EXPENSE"] == "Yes",
+      note: parse_string(transaction["NOTE"]),
+      place: transaction["PLACE"],
+      tags: parse_tags(transaction["TAGS"]),
+      receipt: transaction["RECEIPT"]
+    }
+  end
+
+  defp parse_string(string) do
+    case string do
+      "" -> nil
+      string -> string
+    end
+  end
+
+  defp parse_catgory(string) do
+    case parse_string(string) do
+      nil -> "UNKNOWN"
+      cat -> cat
+    end
+  end
+
+  defp parse_date(string) do
+    string = String.replace(string, "\n", " ")
+    {:ok, time} = Timex.parse(string, "%Y-%m-%d %I:%M %P", :strftime)
+    time
+  end
+
+  defp parse_amount(string) do
+    {amount, _} =
+      String.replace(string, ",", "")
+      |> Float.parse()
+
+    Float.round(amount, 3)
+  end
+
+  defp parse_tags(string) do
+    String.split(string, ",")
+    |> Enum.reject(fn r -> r == "" end)
+    |> Enum.map(fn tag ->
+      String.replace(tag, "#", "")
+      |> String.downcase()
+    end)
+  end
+end
+```
+
+<!-- livebook:{"reevaluate_automatically":true} -->
+
+```elixir
+transactions =
+  "~/Documents/expenses/2017/expenses.csv"
+  |> Path.expand()
+  |> File.stream!()
+  |> CSV.decode(headers: true)
+  |> Stream.map(fn {:ok, row} -> Transactions.parse(row) end)
+  |> Enum.map(&Function.identity/1)
+```
+
+```elixir
+{incomes, spends} =
+  transactions
+  |> Enum.split_with(fn t ->
+    case t do
+      %Income{} -> true
+      %Spend{} -> false
+    end
+  end)
+```
+
+```elixir
+data =
+  spends
+  |> Enum.filter(fn s -> s.expense end)
+  |> Enum.group_by(fn s ->
+    {s.date.month, s.category}
+  end)
+  |> Enum.map(fn {{month, category}, spends} ->
+    total = spends |> Enum.map(fn s -> s.amount end) |> Enum.sum() |> Float.round(3)
+    %{month: month, category: category, total: total}
+  end)
+
+amount_by_cat =
+  Enum.group_by(data, fn s ->
+    s.category
+  end)
+
+amount_by_month =
+  Enum.group_by(data, fn s ->
+    s.month
+  end)
+
+keys =
+  ["Category"] ++
+    (1..12
+     |> Enum.map(fn m -> Timex.month_name(m) end)) ++
+    ["Total", "Average"]
+
+amount_by_cat_month =
+  amount_by_cat
+  |> Enum.map(fn {category, data} ->
+    data =
+      1..12
+      |> Enum.reduce(%{}, fn m, acc ->
+        month = Timex.month_name(m)
+
+        total =
+          case data |> Enum.find(fn s -> s.month == m end) do
+            nil -> 0.0
+            s -> s.total
+          end
+
+        Map.put(acc, month, total)
+      end)
+
+    total = Enum.map(data, fn {_month, amount} -> amount end) |> Enum.sum() |> Float.round(3)
+
+    %{"Category" => category, "Total" => total, "Average" => Float.round(total / 12, 3)}
+    |> Map.merge(data)
+  end)
+
+per_month =
+  1..12
+  |> Enum.reduce(%{}, fn m, acc ->
+    month = Timex.month_name(m)
+
+    total =
+      case amount_by_month[m] do
+        nil -> 0.0
+        spends -> spends |> Enum.map(fn s -> s.total end) |> Enum.sum() |> Float.round(3)
+      end
+
+    Map.put(acc, month, total)
+  end)
+
+total_per_month =
+  Enum.map(per_month, fn {_month, amount} -> amount end) |> Enum.sum() |> Float.round(3)
+
+(amount_by_cat_month ++
+   [
+     %{
+       "Category" => "Total",
+       "Total" => total_per_month,
+       "Average" => Float.round(total_per_month / 12, 3)
+     }
+     |> Map.merge(per_month)
+   ])
+|> Kino.DataTable.new(keys: keys)
+```
