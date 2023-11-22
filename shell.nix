@@ -1,10 +1,16 @@
 { sources ? import ./nix/sources.nix
-, pkgs ? import sources.nixpkgs { }
+, pkgs ? import sources.nixpkgs { overlays = [ (import ./nix/rust-overlay.nix) ]; }
 }:
 
 with pkgs;
 let
   inherit (lib) optional optionals;
+
+  rust = pkgs.rust-bin.stable."1.67.0".default.override {
+    # for rust-analyzer
+    extensions = [ "rust-src" ];
+    targets = [ "wasm32-unknown-unknown" "aarch64-apple-ios" ];
+  };
 
   basePackages = [
     (import ./nix/default.nix { inherit pkgs; })
@@ -13,6 +19,7 @@ let
     gcc12
     clang_13
     faiss
+    rust
   ];
 
   inputs = basePackages ++ lib.optionals stdenv.isLinux [ inotify-tools ]
